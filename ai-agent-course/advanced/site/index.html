@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>홈 · AI Agent 강의</title>
+<link rel="stylesheet" href="style.css?v=34163edb">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1><p>4주 × 2회 · 총 8세션</p></a></div>
+  <div class="nav-group-title">강의</div>
+  <nav>
+      <a href="session-01.html"><span class="num">01</span>AI 에이전트 개요 & 패러다임</a>
+      <a href="session-02.html"><span class="num">02</span>Tool Use / Function Calling의 본질</a>
+      <a href="session-03.html"><span class="num">03</span>추론 & 계획 패턴</a>
+      <a href="session-04.html"><span class="num">04</span>메모리 & 컨텍스트 관리</a>
+      <a href="session-05.html"><span class="num">05</span>LangChain 아키텍처</a>
+      <a href="session-06.html"><span class="num">06</span>LangGraph 상태 그래프</a>
+      <a href="session-07.html"><span class="num">07</span>멀티 에이전트 & 오케스트레이션</a>
+      <a href="session-08.html"><span class="num">08</span>평가·관찰가능성·프로덕션</a>
+  </nav>
+  <div class="nav-group-title">실습</div>
+  <nav>
+      <a href="playground.html">Python 플레이그라운드</a>
+  </nav>
+  <div class="nav-group-title">자료</div>
+  <nav>
+      <a href="map.html">🗺️ 관계 지도</a>
+      <a href="spec.html">공통 데모 예제 명세</a>
+      <a href="handout-one-pagers.html">회차별 1페이지 요약</a>
+      <a href="handout-discussion.html">토론 질문 카드</a>
+      <a href="glossary.html">용어집(Glossary)</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../basics/site/index.html">🎓 입문 과정</a>
+  </nav>
+</aside>
+<main class="content">
+  <div class="hero">
+    <h1>AI Agent 개발 강의</h1>
+    <p>중상급 개발자 대상 · 이론/개념 중심 · 세션당 1~1.5시간</p>
+    <div class="badges">
+      <span class="badge">raw API → LangChain → LangGraph</span>
+      <span class="badge">하나의 예제로 관통</span>
+      <span class="badge">브라우저 Python 실습</span>
+    </div>
+  </div>
+
+  <div class="notice">
+    전 과정이 하나의 토이 태스크 <b>“리서치 어시스턴트”</b>로 이어집니다.
+    raw 루프(세션 2) → LangChain(세션 5) → LangGraph(세션 6)로 같은 예제가 진화합니다.
+    <a href="spec.html">공통 예제 명세 보기 →</a>
+  </div>
+
+  <h2 style="border-bottom:1px solid var(--border);padding-bottom:.25em;">커리큘럼</h2>
+  <div class="cards">
+    <a class="card" href="session-01.html"><div class="week">1주차 · 1회</div><div class="title">01. AI 에이전트 개요 & 패러다임</div><div class="desc">LLM 호출 vs 에이전트, 구성요소, Workflow vs Agent 스펙트럼</div></a>
+    <a class="card" href="session-02.html"><div class="week">1주차 · 2회</div><div class="title">02. Tool Use / Function Calling의 본질</div><div class="desc">도구 스키마, 에이전트 루프를 raw API로 직접 구현</div></a>
+    <a class="card" href="session-03.html"><div class="week">2주차 · 1회</div><div class="title">03. 추론 & 계획 패턴</div><div class="desc">ReAct, Plan-and-Execute, Reflection, trade-off</div></a>
+    <a class="card" href="session-04.html"><div class="week">2주차 · 2회</div><div class="title">04. 메모리 & 컨텍스트 관리</div><div class="desc">단기/장기 기억, 압축·요약, RAG 개요, state 관리</div></a>
+    <a class="card" href="session-05.html"><div class="week">3주차 · 1회</div><div class="title">05. LangChain 아키텍처</div><div class="desc">LCEL, Runnable, 추상화의 비용/이점</div></a>
+    <a class="card" href="session-06.html"><div class="week">3주차 · 2회</div><div class="title">06. LangGraph 상태 그래프</div><div class="desc">State/Node/Edge, 순환, Human-in-the-loop</div></a>
+    <a class="card" href="session-07.html"><div class="week">4주차 · 1회</div><div class="title">07. 멀티 에이전트 & 오케스트레이션</div><div class="desc">Supervisor/Swarm, 핸드오프, RAG 심화</div></a>
+    <a class="card" href="session-08.html"><div class="week">4주차 · 2회</div><div class="title">08. 평가·관찰가능성·프로덕션</div><div class="desc">eval, tracing, 가드레일, 캡스톤</div></a>
+  </div>
+
+  <h2 style="border-bottom:1px solid var(--border);padding-bottom:.25em;">실습 & 자료</h2>
+  <div class="cards">
+    <a class="card" href="map.html"><div class="week">자료</div>
+      <div class="title">🗺️ 관계 지도</div>
+      <div class="desc">세션이 어떻게 이어지는지 + 핵심 개념↔세션 매트릭스를 한눈에</div></a>
+    <a class="card" href="playground.html"><div class="week">실습</div>
+      <div class="title">Python 플레이그라운드</div>
+      <div class="desc">브라우저에서 raw 에이전트 루프를 직접 실행하고 trace를 관찰</div></a>
+    <a class="card" href="handout-one-pagers.html"><div class="week">자료</div>
+      <div class="title">회차별 1페이지 요약</div>
+      <div class="desc">8개 세션 핵심 정리 + 자가 점검 질문</div></a>
+    <a class="card" href="handout-discussion.html"><div class="week">자료</div>
+      <div class="title">토론 질문 카드</div>
+      <div class="desc">세션별 개방형 토론 + 강사용 촉진 포인트</div></a>
+  </div>
+</main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>버그 발견 및 수정 · AI 에이전트 입문</title>
+<link rel="stylesheet" href="style.css?v=34163edb">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>AI 에이전트 입문</h1><p>기초 + 실전 · 14개 레슨</p></a></div>
+  <div class="nav-group-title">레슨</div>
+  <nav>
+      <a href="lesson-00.html"><span class="num">00</span>AI 시대 이해하기</a>
+      <a href="lesson-01.html"><span class="num">01</span>AI 모델은 어떻게 동작하나</a>
+      <a href="lesson-02.html"><span class="num">02</span>환각과 한계</a>
+      <a href="lesson-03.html"><span class="num">03</span>토큰 & 요금제</a>
+      <a href="lesson-04.html"><span class="num">04</span>컨텍스트</a>
+      <a href="lesson-05.html"><span class="num">05</span>도구 호출</a>
+      <a href="lesson-06.html"><span class="num">06</span>에이전트</a>
+      <a href="lesson-07.html"><span class="num">07</span>에이전트 활용하기</a>
+      <a href="lesson-08.html"><span class="num">08</span>코드베이스 이해하기</a>
+      <a href="lesson-09.html"><span class="num">09</span>기능 구현하기</a>
+      <a href="lesson-10.html" class="active"><span class="num">10</span>버그 발견 및 수정</a>
+      <a href="lesson-11.html"><span class="num">11</span>코드 리뷰 및 테스트</a>
+      <a href="lesson-12.html"><span class="num">12</span>에이전트 맞춤 설정</a>
+      <a href="lesson-13.html"><span class="num">13</span>전체 정리 & 다음 단계</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../advanced/site/index.html">🚀 심화 과정</a>
+  </nav>
+</aside>
+<main class="content md" id="content"></main>
+</div>
+<script type="text/markdown" id="md-src"># 레슨 10 · 버그 발견 및 수정
+
+에이전트가 더 많은 코드를 작성할수록, 우리는 그 코드를 리뷰하고 버그를 추적하는 데 더 많은 시간을 쓰게 됩니다. 디버깅의 기본기를 다시 짚어보고, 그 일부를 에이전트에게 안전하게 위임하는 법을 배워봅니다.
+
+## 학습 목표
+
+- 사람이든 에이전트든 동일하게 통하는 디버깅 6원칙을 이해한다.
+- 간단한 오류는 빠르게 맡기고, 까다로운 버그는 "증거 우선"으로 접근하는 두 가지 방법을 구분한다.
+- 런타임 증거를 에이전트 루프에 넣는 방법과, 이해하지 못한 수정안을 그대로 받아들이는 함정을 피하는 법을 안다.
+
+## 디버깅 기본기 — 6원칙
+
+좋은 디버깅은 ==사람이 하든 에이전트가 하든 같은 원칙==을 따릅니다. 에이전트에게 위임하기 전에, 이 골격부터 머릿속에 넣어두세요. [[chip:info: 6원칙]]
+
+| 원칙 | 핵심 | 한 줄 |
+|------|------|-------|
+| ① 신뢰할 수 있는 재현 | 재현 못 하면 수정도 검증 못 한다 | 문제를 일으키는 정확한 단계·입력·조건을 기록 |
+| ② 최소 재현 사례 | 작을수록 원인이 보인다 | 버그와 무관한 것은 모두 제거 |
+| ③ 변수 분리 | 한 번에 하나만 변경 | 세 개를 바꿔 버그가 사라지면 어느 게 고친 건지 모른다 |
+| ④ 구체적 가설 | 테스트 가능하게 | "결제에 버그가 있을 듯"(X) → "calculateTotal()이 음수 할인을 미처리"(O) |
+| ⑤ 코드 계측 | 의심 지점에 로깅 | 기대값 vs 실제값을 비교 |
+| ⑥ 회귀 방지 테스트 | 같은 버그의 재발을 막는다 | 버그를 잡아내는 테스트를 작성 |
+
+> [!TIP] 가설은 "테스트 가능한 문장"으로
+> 가설이 모호하면 에이전트도 헤맵니다. "어딘가 느려요"가 아니라 ==`getOrders()`가 인덱스 없이 전체 스캔을 한다==처럼, 검증할 수 있는 문장으로 좁혀 주세요.
+
+## 두 가지 접근법
+
+버그의 성격에 따라 두 갈래로 나뉩니다.
+
+```mermaid
+flowchart TD
+  A[버그 발견] --> B{오류 메시지가 명확한가}
+  B -- 예 --> C[빠른 수정<br/>오류·스택 트레이스 붙여넣고 맥락 제공]
+  C --> D[에이전트가 코드 찾아 수정]
+  B -- 아니오 / 간헐적 --> E[증거 우선 'Debug Mode'<br/>가설 → 타깃 로깅 계측]
+  E --> F[버그 재현 요청 → 로그 분석]
+  F --> G[근본 원인 겨냥 수정]
+```
+
+### (1) 간단한 오류는 빠르게
+
+오류 메시지가 분명하면, 에이전트가 직접 찾아 고치는 경우가 많습니다. ==오류와 스택 트레이스를 붙여넣고, 언제 발생하는지 맥락을 조금 더해== 맡기면 됩니다.
+
+예를 들어 `TypeError: Cannot read properties of undefined (reading 'profile')` 같은 스택 트레이스에 "프로필 온보딩 도입 *이전*에 만들어진 유저가 프로필을 볼 때만 발생합니다"라는 맥락을 덧붙이면, 에이전트는 스택을 따라 코드를 찾고 수정안을 내놓습니다. 원인이 메시지에 바로 드러날 때 특히 잘 통합니다.
+
+### (2) 까다로운 버그는 증거 우선
+
+간헐적이거나 ==레이스 컨디션==처럼 타이밍에 의존하는 버그는, 수정안을 *추측*하기 전에 **런타임 증거부터 모읍니다**. 흐름은 이렇습니다.
+
+1. 무엇이 잘못됐을지 **가설**을 세운다.
+2. 의심 지점에 **타깃 로깅**으로 코드를 계측한다.
+3. 데이터를 모으는 동안 **버그를 재현**해 달라고 요청한다.
+4. 로그를 분석해 **근본 원인**을 식별한다.
+5. 모은 증거를 바탕으로 **정확히 겨냥한 수정**을 한다.
+
+이 방식은 "Checkout이 어떤 유저에게는 간헐적으로 실패하고, 일관된 오류 메시지도 없다"처럼 눈으로 코드만 읽어서는 잡기 어려운 버그에 강합니다. 앞서 본 디버깅 기본기를 그대로 자동화하는 셈입니다.
+
+> [!EXAMPLE] 도구 예시 (Cursor)
+> Cursor에서는 에이전트 드롭다운의 **Debug Mode**가 위 다섯 단계를 자동으로 수행하고, 여러 모델을 동시에 선택해 같은 디버깅 프롬프트를 **병렬로** 실행할 수 있습니다. 각 에이전트는 격리되어 서로 간섭하지 않으며, Cursor는 어떤 해결책이 가장 좋아 보이는지 추천도 표시합니다. 다만 추천을 그대로 믿지 말고 그 *추론까지* 함께 평가하세요.
+
+## 여러 모델을 동시에 돌리기
+
+까다로운 버그에서는 서로 다른 모델이 서로 다른 단서를 잡아내기도 합니다. ==같은 디버깅 프롬프트를 여러 모델에 병렬로== 던지고, 각자 격리된 상태에서 제안을 내게 한 뒤, 근거가 가장 강한 것을 고르는 전략이 유효합니다.
+
+- 재현 단계와 가설을 담은 **명확한 디버깅 요약**을 먼저 작성한다.
+- 여러 모델에 동시에 제출해 **독립적으로** 일하게 한다.
+- 각 제안을 비교하고, 결과뿐 아니라 **추론의 근거**가 강한 것을 채택한다.
+
+> [!CAUTION] 까다로운 버그에만
+> 여러 모델을 동시에 돌리면 그만큼 ==토큰과 시간 비용이 곱절==로 듭니다. 오류 메시지가 분명한 단순 버그까지 이렇게 풀 필요는 없습니다. 코드만 읽어서는 막막한 **간헐적·고난도 버그**에 아껴 쓰세요 — 비용을 치를 만큼 단서가 절실한 자리입니다.
+
+## 런타임 증거를 루프에 넣기
+
+에이전트는 코드만 읽어도 흔한 버그나 성능 문제를 찾아내지만, 줄 수 있는 **런타임 정보가 많을수록** 더 깊이 파고듭니다.
+
+```
+[ 코드만 읽기 ]      → 질문만으로도 느린 쿼리·흔한 버그 발견
+        │ 부족하면
+        ▼
+[ 실제 데이터 붙여넣기 ] → 터미널 출력 · 쿼리 로그 · EXPLAIN ANALYZE
+        │ 프런트엔드라면
+        ▼
+[ 브라우저로 직접 관찰 ] → 콘솔 로그 · 네트워크 · DOM
+        │ 운영 환경이라면
+        ▼
+[ MCP로 모니터링 연결 ]  → Sentry · Datadog · DB를 직접 조회
+```
+
+먼저 **질문부터** 던져 보세요. "주문이 많은 유저의 내역 페이지가 4초 걸려요. 왜 느릴까요?"만으로도 에이전트가 느린 쿼리를 짚어 줄 때가 있습니다. 그것으로 부족하면, `EXPLAIN ANALYZE` 출력이나 애플리케이션 로그처럼 **실제 데이터를 대화에 그대로 붙여넣어** 에이전트가 스키마까지 원인을 거슬러 추적하게 하세요.
+
+> [!TIP] 어디까지 파고들까 — 판단 기준
+> 위 계층은 **위에서부터 차례로** 올라갑니다. 코드만 읽어 가설이 ==재현·검증되면 거기서 멈추세요==. 답이 흔들리거나 가설이 데이터와 어긋날 때만 한 계층 더 내려가 증거를 보탭니다 — 필요 이상으로 운영 모니터링까지 끌어오는 것은 시간 낭비입니다.
+
+> [!EXAMPLE] 도구 예시 (Cursor)
+> Cursor의 integrated browser는 에이전트가 웹 앱에 직접 접근해 콘솔·네트워크·DOM을 사용자가 복사할 필요 없이 관찰하게 해줍니다. 또 MCP 서버로 Sentry(오류 상세·스택), Datadog(운영 로그·APM), Database(가설 검증용 쿼리), Linear/GitHub Issues(재현 단계 가져오기)를 연결하면, 데이터를 손으로 붙여넣는 대신 에이전트가 필요할 때 직접 가져옵니다.
+
+## 흔한 함정 — 이해 못 한 수정안을 그대로 수용
+
+가장 위험한 실패는, ==수정을 이해하지 못한 채 받아들이는== 것입니다. 에이전트가 `null` 체크 하나를 추가해 **에러는 사라지지만**, 정작 그 값이 왜 `null`이었는지 — 실제 데이터 불일치 — 는 그대로 남는 경우가 대표적입니다. 증상만 가린 셈이죠.
+
+여기서 **레슨 02(환각·검증 중심 사고)** 와 직접 연결됩니다. 에이전트는 모를 때도 ==그럴듯해 보이는 설명을 지어낼 수 있습니다==. 디버깅 설명도 예외가 아닙니다. 근본 원인을 정말 찾았는지는 질문으로 검증해야 합니다.
+
+> [!WARNING] 이해될 때까지 질문하세요
+> "왜 이 값이 `null`인가요?" · "무엇이 바뀌어서 이 일이 생겼나요?" · "이게 **근본 원인**인가요, 아니면 증상만 가린 건가요?" — 이 질문에 스스로 답할 수 있을 때까지, 그 수정은 아직 검증된 게 아닙니다.
+
+## 💡 한 문장 요약
+
+> [!IMPORTANT] 한 문장 요약
+> 간단한 오류는 ==오류 메시지를 붙여넣어 빠르게== 맡기고, 까다로운 버그는 ==증거 우선(가설 → 계측 → 재현 → 로그 분석 → 수정)==으로 접근하되, 에이전트의 그럴듯한 설명(레슨 02 환각)이 근본 원인인지 질문으로 검증하는 책임은 당신에게 있습니다.
+
+## ✅ 확인 문제
+
+**Q1. 두 사용자가 동시에 같은 문서를 편집할 때만 나타나는 버그(레이스 컨디션)의 근본 원인을 찾기에 가장 적합한 접근은?**
+
+정답: **증거 우선(Debug Mode)으로 코드를 계측하고, 레이스 컨디션을 재현한 뒤, 런타임 로그를 분석한다.**
+
+해설: 오류만 붙여넣고 맡기거나 코드만 눈으로 읽는 방식은 재현·타이밍에 의존하는 버그에 약합니다. 간헐적 버그는 *추측*이 아니라 ==런타임 증거 수집==이 핵심이며, 가설 → 타깃 로깅 → 재현 → 로그 분석의 흐름이 정확히 이런 상황을 위한 것입니다.
+
+## 🔗 다음 / 심화 연결
+
+- **이전 레슨: 09 기능 구현** — 새 기능을 에이전트와 함께 만들어 본 흐름이 자연스럽게 "그 코드의 버그를 잡는" 이번 레슨으로 이어집니다.
+- **레슨 02(환각/검증 중심 사고)** 와 짝을 이룹니다. 디버깅에서 에이전트가 내놓는 "그럴듯한 원인 설명"도 출발점일 뿐 정답이 아니며, 질문과 데이터로 검증해야 합니다.
+- 다음 단계에서는 변경이 올바른지, 새로운 문제를 일으키지 않는지 **코드 리뷰와 체계적 테스트**로 확인하는 법을 다룹니다.
+- 증거 우선 디버깅과 여러 모델 비교는 심화 과정 **세션 3**(추론·계획)·**세션 8**(평가·관찰가능성)과 맞닿습니다.
+</script>
+<script>window.XREF=[["레슨 00", "lesson-00.html"], ["레슨00", "lesson-00.html"], ["레슨 0", "lesson-00.html"], ["레슨0", "lesson-00.html"], ["레슨 01", "lesson-01.html"], ["레슨01", "lesson-01.html"], ["레슨 1", "lesson-01.html"], ["레슨1", "lesson-01.html"], ["레슨 02", "lesson-02.html"], ["레슨02", "lesson-02.html"], ["레슨 2", "lesson-02.html"], ["레슨2", "lesson-02.html"], ["레슨 03", "lesson-03.html"], ["레슨03", "lesson-03.html"], ["레슨 3", "lesson-03.html"], ["레슨3", "lesson-03.html"], ["레슨 04", "lesson-04.html"], ["레슨04", "lesson-04.html"], ["레슨 4", "lesson-04.html"], ["레슨4", "lesson-04.html"], ["레슨 05", "lesson-05.html"], ["레슨05", "lesson-05.html"], ["레슨 5", "lesson-05.html"], ["레슨5", "lesson-05.html"], ["레슨 06", "lesson-06.html"], ["레슨06", "lesson-06.html"], ["레슨 6", "lesson-06.html"], ["레슨6", "lesson-06.html"], ["레슨 07", "lesson-07.html"], ["레슨07", "lesson-07.html"], ["레슨 7", "lesson-07.html"], ["레슨7", "lesson-07.html"], ["레슨 08", "lesson-08.html"], ["레슨08", "lesson-08.html"], ["레슨 8", "lesson-08.html"], ["레슨8", "lesson-08.html"], ["레슨 09", "lesson-09.html"], ["레슨09", "lesson-09.html"], ["레슨 9", "lesson-09.html"], ["레슨9", "lesson-09.html"], ["레슨 10", "lesson-10.html"], ["레슨10", "lesson-10.html"], ["레슨 10", "lesson-10.html"], ["레슨10", "lesson-10.html"], ["레슨 11", "lesson-11.html"], ["레슨11", "lesson-11.html"], ["레슨 11", "lesson-11.html"], ["레슨11", "lesson-11.html"], ["레슨 12", "lesson-12.html"], ["레슨12", "lesson-12.html"], ["레슨 12", "lesson-12.html"], ["레슨12", "lesson-12.html"], ["레슨 13", "lesson-13.html"], ["레슨13", "lesson-13.html"], ["레슨 13", "lesson-13.html"], ["레슨13", "lesson-13.html"], ["세션 01", "../../advanced/site/session-01.html"], ["세션 1", "../../advanced/site/session-01.html"], ["세션01", "../../advanced/site/session-01.html"], ["세션1", "../../advanced/site/session-01.html"], ["세션 02", "../../advanced/site/session-02.html"], ["세션 2", "../../advanced/site/session-02.html"], ["세션02", "../../advanced/site/session-02.html"], ["세션2", "../../advanced/site/session-02.html"], ["세션 03", "../../advanced/site/session-03.html"], ["세션 3", "../../advanced/site/session-03.html"], ["세션03", "../../advanced/site/session-03.html"], ["세션3", "../../advanced/site/session-03.html"], ["세션 04", "../../advanced/site/session-04.html"], ["세션 4", "../../advanced/site/session-04.html"], ["세션04", "../../advanced/site/session-04.html"], ["세션4", "../../advanced/site/session-04.html"], ["세션 05", "../../advanced/site/session-05.html"], ["세션 5", "../../advanced/site/session-05.html"], ["세션05", "../../advanced/site/session-05.html"], ["세션5", "../../advanced/site/session-05.html"], ["세션 06", "../../advanced/site/session-06.html"], ["세션 6", "../../advanced/site/session-06.html"], ["세션06", "../../advanced/site/session-06.html"], ["세션6", "../../advanced/site/session-06.html"], ["세션 07", "../../advanced/site/session-07.html"], ["세션 7", "../../advanced/site/session-07.html"], ["세션07", "../../advanced/site/session-07.html"], ["세션7", "../../advanced/site/session-07.html"], ["세션 08", "../../advanced/site/session-08.html"], ["세션 8", "../../advanced/site/session-08.html"], ["세션08", "../../advanced/site/session-08.html"], ["세션8", "../../advanced/site/session-08.html"]];window.SLUG="lesson-10";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="app.js?v=34163edb"></script>
+</body>
+</html>

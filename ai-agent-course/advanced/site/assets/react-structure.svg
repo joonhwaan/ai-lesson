@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" role="img" aria-label="ReAct 구조 다이어그램">
+  <defs>
+    <style>
+      .title { font: 700 20px "Segoe UI", sans-serif; fill: #1f2937; }
+      .label { font: 600 16px "Segoe UI", sans-serif; fill: #111827; }
+      .sub { font: 13px "Segoe UI", sans-serif; fill: #374151; }
+      .box { fill: #f8fafc; stroke: #94a3b8; stroke-width: 2; rx: 14; }
+      .loop { fill: #eef2ff; stroke: #6366f1; stroke-width: 2; rx: 18; }
+      .arrow { stroke: #1f2937; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .arrow-soft { stroke: #6366f1; stroke-width: 2.5; fill: none; marker-end: url(#arrow-soft); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#1f2937" />
+    </marker>
+    <marker id="arrow-soft" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#6366f1" />
+    </marker>
+  </defs>
+
+  <rect x="20" y="20" width="860" height="320" class="loop" />
+  <text x="450" y="55" text-anchor="middle" class="title">ReAct Loop (Reason + Act)</text>
+
+  <rect x="90" y="120" width="200" height="90" class="box" />
+  <text x="190" y="155" text-anchor="middle" class="label">Thought</text>
+  <text x="190" y="178" text-anchor="middle" class="sub">추론 / 계획 세부</text>
+
+  <rect x="350" y="120" width="200" height="90" class="box" />
+  <text x="450" y="155" text-anchor="middle" class="label">Action</text>
+  <text x="450" y="178" text-anchor="middle" class="sub">도구 호출</text>
+
+  <rect x="610" y="120" width="200" height="90" class="box" />
+  <text x="710" y="155" text-anchor="middle" class="label">Observation</text>
+  <text x="710" y="178" text-anchor="middle" class="sub">도구 결과</text>
+
+  <path d="M290 165 L350 165" class="arrow" />
+  <path d="M550 165 L610 165" class="arrow" />
+
+  <path d="M710 210 C710 275 190 275 190 210" class="arrow-soft" />
+  <text x="450" y="260" text-anchor="middle" class="sub">관찰 결과를 근거로 재추론</text>
+
+  <text x="450" y="310" text-anchor="middle" class="sub">종료 조건: Final Answer 또는 max_steps</text>
+</svg>

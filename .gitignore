@@ -1,0 +1,7 @@
+# OMC 플러그인 / 인덱싱 등 도구 상태
+.omc/
+.ai-index/
+
+# Python 캐시
+__pycache__/
+*.pyc

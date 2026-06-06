@@ -1,0 +1,325 @@
+# 세션 06: LangGraph — 상태 그래프 기반 에이전트
+
+> "세션 02의 `while` 루프는 사실 **상태 머신**이었다. LangGraph는 그 상태 머신을 눈에 보이는 **그래프**로 그리게 해준다."
+
+---
+
+## 학습 목표
+
+1. **왜 그래프인가** — 순환(loop)·조건분기(branch)가 있는 에이전트 흐름을 모델링하는 데 그래프가 왜 적합한지 설명할 수 있다.
+2. 핵심 개념 5종(State / Node / Edge / Conditional Edge / 컴파일)을 구분하고 각각의 역할을 말할 수 있다.
+3. 세션 02의 `while` 루프를 **노드와 엣지로 1:1 대응**시켜 상태 머신으로 그릴 수 있다.
+4. 제어 흐름 도구(분기·반복·체크포인트·Human-in-the-loop 개입지점)를 그래프 위에서 설계할 수 있다.
+5. 같은 리서치 어시스턴트를 LangGraph ReAct 에이전트로 표현하고, 실행을 시각화·추적할 수 있다.
+
+---
+
+## 회차 타임라인 (총 85분)
+
+| 구간 | 시간 | 내용 |
+|------|------|------|
+| 복습 | 5분 | 세션 05: LCEL은 한 방향 파이프 → 루프 표현의 한계 |
+| 개념 강의 ① | 20분 | 왜 그래프인가 + State/Node/Edge/Conditional Edge/컴파일 |
+| 개념 강의 ② | 20분 | while 루프 ↔ 그래프 대응, 제어 흐름(분기/반복/체크포인트/HITL) |
+| 데모 | 25분 | `demos/03_langgraph_agent.py` — ReAct 에이전트 시각화·추적 |
+| 토론 | 15분 | 우리 워크플로를 노드/엣지로 모델링 |
+
+---
+
+## 본문
+
+### 1. 복습: LCEL의 벽
+
+세션 05에서 LCEL 체인 `prompt | llm | parser` 는 **한 방향 파이프**라고 했다. 하지만 우리 리서치 어시스턴트는 본질적으로 **루프**다.
+
+```
+LLM → 도구 → 결과 → LLM → 도구 → 결과 → ... → 답
+       └────────── 몇 번 돌지 모름 ──────────┘
+```
+
+"몇 번 돌지 모름 + 도구를 쓸지 말지 매번 LLM이 결정" = **반복 + 조건분기**.
+직선 파이프(`|`)로는 못 그린다. 세션 05의 `AgentExecutor`는 이 루프를 **블랙박스 안에** 숨겼다. LangGraph는 그 루프를 **밖으로 꺼내 그래프로 명시**한다.
+
+---
+
+### 2. 왜 그래프인가
+
+| 흐름 유형 | LCEL 파이프 | 그래프 |
+|-----------|-------------|--------|
+| 직선 (A→B→C) | ⭕ 자연스러움 | ⭕ 가능 |
+| 조건분기 (A→B 또는 A→C) | ❌ 어색 | ⭕ Conditional Edge |
+| 반복 (A→B→A→B…) | ❌ 불가 | ⭕ 사이클 엣지 |
+| 중단/재개 | ❌ | ⭕ 체크포인트 |
+| 중간 개입 | ❌ | ⭕ Human-in-the-loop |
+
+그래프는 **노드(무엇을 하나)** 와 **엣지(다음에 어디로 가나)** 를 분리한다. 그래서 "도구를 쓸지 말지"(분기)와 "다시 LLM으로 돌아가기"(반복)를 ==선언적으로== 표현할 수 있다. 제어 흐름이 코드 안에 숨지 않고 ==그림으로 드러난다== — 이게 핵심 가치다.
+
+---
+
+### 3. 핵심 개념 5종
+
+#### 3.1 State — 그래프를 흐르는 단일 자료구조
+
+모든 노드가 읽고/쓰는 공유 상태. 세션 02의 `messages` 리스트가 여기로 승격된다.
+
+```python
+from typing import Annotated, TypedDict
+from langgraph.graph import add_messages
+
+class AgentState(TypedDict):
+    messages: Annotated[list, add_messages]   # 노드들이 메시지를 누적
+```
+
+`Annotated[..., add_messages]`는 "노드가 반환한 메시지를 ==덮어쓰지 말고 누적==하라"는 reducer 지정이다. [[chip:info: reducer]] 세션 02의 `messages.append(...)`가 상태 정의로 올라온 것.
+
+#### 3.2 Node — 상태를 받아 상태를 갱신하는 함수
+
+```python
+def call_model(state: AgentState):
+    response = llm_with_tools.invoke(state["messages"])
+    return {"messages": [response]}     # 갱신분만 반환
+```
+
+노드는 그냥 파이썬 함수다. `state`를 받아 **갱신할 부분만** dict로 반환한다.
+
+#### 3.3 Edge — 노드 간 고정 연결
+
+```python
+graph.add_edge("tools", "agent")   # 도구 실행 후엔 항상 agent로
+```
+
+#### 3.4 Conditional Edge — 분기
+
+```python
+def should_continue(state):
+    last = state["messages"][-1]
+    return "tools" if last.tool_calls else "end"
+
+graph.add_conditional_edges("agent", should_continue,
+                            {"tools": "tools", "end": END})
+```
+
+"마지막 LLM 응답에 도구 호출이 있으면 tools로, 없으면 종료" — 세션 02의 `if resp.has_tool_call:` 가 **엣지로 외부화**된다.
+
+#### 3.5 컴파일 — 그래프를 실행 가능 객체로
+
+```python
+app = graph.compile(checkpointer=memory)   # 검증 + 최적화 + Runnable화
+app.invoke({"messages": [user_question]})
+```
+
+컴파일하면 그래프가 **Runnable**이 된다(세션 05의 인터페이스 재등장). 그래서 `.invoke`/`.stream`을 그대로 쓴다.
+
+---
+
+### 4. 그래프 다이어그램 — 우리 리서치 어시스턴트
+
+```mermaid
+flowchart TD
+  START([START]) --> AG[agent<br/>call_model: LLM이 생각/도구결정]
+  AG --> COND{should_continue?}
+  COND -- tool_calls 있음 --> TOOLS[tools<br/>web_search / calc]
+  COND -- 없음 --> END([END])
+  TOOLS -- add_edge tools→agent 사이클 --> AG
+```
+
+이 그래프에는 세션 02 루프의 모든 부품이 보인다:
+- `agent` 노드 = LLM 호출 (①)
+- `should_continue` = 도구 파싱/판단 (②, ⑤의 조건)
+- `tools` 노드 = 도구 디스패치/실행 (③)
+- `tools → agent` 엣지 = 결과 주입 후 반복 (④, ⑤)
+
+---
+
+### 5. while 루프 ↔ 그래프 1:1 대응 (이번 세션의 심장)
+
+```
+   세션 02: raw while 루프              세션 06: LangGraph 그래프
+   ────────────────────────            ──────────────────────────
+   messages = [...]              ===>   AgentState.messages (+add_messages)
+   while True:                   ===>   사이클 엣지 (tools → agent)
+     resp = client.chat(msgs)    ===>   "agent" 노드 (call_model)
+     if resp.has_tool_call:      ===>   conditional edge: should_continue
+        result = TOOLS[name]()   ===>   "tools" 노드 (ToolNode)
+        messages.append(result)  ===>   add_messages reducer가 누적
+        continue                 ===>   add_edge("tools","agent")
+     else:                       ===>   분기의 "end" 경로
+        return final             ===>   END
+```
+
+| 세션 02 (제어가 코드 안에 숨음) | 세션 06 (제어가 그래프로 드러남) |
+|--------------------------------|----------------------------------|
+| 흐름이 `if`/`while`에 암묵적 | 흐름이 노드·엣지로 **명시적** |
+| 중단/재개 직접 구현 | 체크포인트로 무료 제공 |
+| 중간 개입 어려움 | interrupt로 Human-in-the-loop |
+| 시각화 없음 | `draw_mermaid()`로 그림 출력 |
+
+> [!IMPORTANT] 메시지
+> LangGraph는 새로운 마법이 아니라, ==세션 02의 상태 머신을 1급 시민으로 끌어올린 것==이다. 같은 리서치 어시스턴트, 같은 도구(`web_search`/`calculator`), 표현만 그래프.
+
+---
+
+### 6. 제어 흐름 — 그래프가 열어주는 것들
+
+#### 6.1 분기 (Conditional Edge)
+"도구를 쓸까 / 답을 낼까"뿐 아니라 "어떤 도구로 갈까", "재시도할까/포기할까"도 분기 함수로 표현.
+
+**같은 분기, 두 가지 표현 — 노드 내부 `if` vs Conditional Edge**
+
+같은 동작이라도 분기를 *어디에* 두느냐에 따라 그래프가 달라진다.
+
+```mermaid
+flowchart LR
+  subgraph L[노드 내부 if — 분기가 코드 안에 숨음]
+    direction TB
+    LA[agent 노드<br/>내부에 if tool_calls...] --> LX[다음 노드]
+    LA -. 그래프엔 엣지 1개만 보임<br/>제어 흐름 불투명 .-> LA
+  end
+  subgraph R[Conditional Edge — 분기가 엣지로 드러남]
+    direction TB
+    RA[agent] --> RC{should_continue}
+    RC -- tools --> RT[tools]
+    RC -- end --> RE([END])
+  end
+```
+
+| 구분 | 노드 내부 `if` | Conditional Edge |
+|------|----------------|------------------|
+| 분기 위치 | 노드 코드 안 (캡슐화) | 그래프 위 엣지 |
+| 그래프에 보이는가 | ❌ 엣지 1개만 | ⭕ 갈래가 그대로 |
+| 디버깅/HITL/재사용 | 어려움 (흐름이 숨음) | 쉬움 (지점이 노출됨) |
+
+> [!NOTE] 두 표현은 동작이 같다. 하지만 conditional edge는 제어 흐름을 ==그래프로 외부화==해 디버깅·HITL·재사용이 쉽다. 노드 내부 `if`는 캡슐화되지만 흐름이 숨어 그래프만 봐선 갈래를 알 수 없다. (토론 질문 Q2의 "재시도 분기"도 결국 어디에 분기를 둘지의 문제다.)
+
+#### 6.2 반복 (Cycle)
+`tools → agent` 엣지가 사이클을 만든다. 무한 루프 방지는 `recursion_limit`로 (세션 02의 "최대 step 수"가 컴파일 옵션으로 승격).
+
+#### 6.3 체크포인트 (Checkpointer)
+```python
+app = graph.compile(checkpointer=MemorySaver())
+app.invoke(inp, config={"configurable": {"thread_id": "user-42"}})
+```
+각 노드 실행 후 상태를 저장. 중단된 대화를 `thread_id`로 재개 → 세션 04(메모리)와 직접 연결.
+
+#### 6.4 Human-in-the-loop (개입지점)
+```python
+app = graph.compile(checkpointer=..., interrupt_before=["tools"])
+```
+"도구를 실행하기 **직전**에 멈춰서 사람의 승인을 받는다." 위험한 도구(결제, 삭제) 앞에 게이트를 세우는 표준 패턴.
+
+```mermaid
+flowchart LR
+  AG[agent] -- tool_calls --> INT[⏸ interrupt_before]
+  INT -- 승인 --> TOOLS[tools] --> AG2[agent]
+  INT -- 거부 --> END([END])
+  INT -. 수정 후 재개 .-> TOOLS
+```
+
+---
+
+## 데모 워크스루 — `demos/03_langgraph_agent.py`
+
+> 세션 02·05와 **동일한 리서치 어시스턴트**. 이번엔 그래프로 그리고, 실행을 시각화·추적한다.
+
+### 7.1 상태와 도구
+
+```python
+from typing import Annotated, TypedDict
+from langgraph.graph import StateGraph, START, END, add_messages
+from langgraph.prebuilt import ToolNode
+from langchain_core.tools import tool
+
+class AgentState(TypedDict):
+    messages: Annotated[list, add_messages]
+
+@tool
+def web_search(query: str) -> str:
+    """웹 검색 결과 상위 N개 스니펫을 반환한다."""
+    ...
+
+@tool
+def calculator(expression: str) -> float:
+    """산술식을 평가한다."""
+    ...
+
+tools = [web_search, calculator]
+llm_with_tools = llm.bind_tools(tools)
+```
+
+### 7.2 노드 정의
+
+```python
+def agent_node(state: AgentState):
+    return {"messages": [llm_with_tools.invoke(state["messages"])]}
+
+def should_continue(state: AgentState):
+    return "tools" if state["messages"][-1].tool_calls else END
+
+tool_node = ToolNode(tools)   # 도구 디스패치를 프레임워크가 제공
+```
+
+### 7.3 그래프 조립 + 컴파일
+
+```python
+g = StateGraph(AgentState)
+g.add_node("agent", agent_node)
+g.add_node("tools", tool_node)
+g.add_edge(START, "agent")
+g.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+g.add_edge("tools", "agent")          # ← 사이클(반복)
+
+app = g.compile()
+```
+
+### 7.4 시각화 + 추적 실행
+
+```python
+# 그래프 그림 출력 (칠판/슬라이드에 그대로)
+print(app.get_graph().draw_ascii())
+
+# 스트리밍으로 각 노드 통과를 추적
+for step in app.stream({"messages": [("user",
+        "2024년 노벨 물리학상 수상자가 누구이고, 받은 상금을 3으로 나누면 얼마야?")]}):
+    print(step)   # agent → tools → agent → ... → END 가 찍힌다
+```
+
+`stream` 출력에서 `agent`(web_search 호출 결정) → `tools`(web_search 실행) → `agent`(수상자 파악 후 calculator 결정) → `tools`(calculator: `11000000 / 3`) → `agent`(최종 자연어 답)이 순서대로 보인다. **demo-task-spec의 표준 시나리오 기대 흐름(1→2→3→4)과 그래프 경로가 정확히 일치**함을 짚을 것.
+
+---
+
+## 토론 질문
+
+1. 세션 02의 `while`/`if`와 LangGraph의 사이클 엣지/conditional edge를 비교하라. 제어 흐름이 "코드 안에 숨는 것"과 "그래프로 드러나는 것"의 실무적 차이는?
+2. 우리 리서치 어시스턴트에 "검색 결과가 비면 다른 쿼리로 재시도"를 추가한다면, 어떤 노드·엣지를 더해야 하는가? 그림으로 그려보라.
+3. `interrupt_before=["tools"]`로 calculator는 그냥 통과시키되 web_search만 사람 승인을 받게 하려면 그래프를 어떻게 바꿔야 하는가?
+4. 체크포인터의 `thread_id`는 세션 04에서 배운 장기/단기 메모리와 어떻게 연결되는가?
+5. 당신의 실무 워크플로 하나를 골라 노드/엣지/분기/사이클로 모델링해 보라. 어디가 분기이고 어디가 반복인가?
+
+---
+
+## ✅ 학습 결과 체크리스트
+
+- ✅ 왜 순환·조건분기 흐름에 그래프가 적합한지 설명할 수 있다
+- ✅ State/Node/Edge/Conditional Edge/컴파일을 구분해 말할 수 있다
+- ✅ 세션 02의 while 루프를 노드·엣지로 1:1 대응시킬 수 있다
+- ✅ Conditional Edge와 노드 내부 if의 차이(제어 흐름의 외부화)를 설명할 수 있다
+- ✅ Checkpointer·interrupt로 영속화와 Human-in-the-loop를 설계할 수 있다
+
+---
+
+## 다음 시간 예고
+
+세션 07에서는 단일 에이전트 그래프를 넘어, **여러 에이전트가 협업**하는 Multi-Agent 시스템(슈퍼바이저/서브그래프)을 다룬다. 노드 하나가 또 다른 그래프가 된다.
+
+---
+
+## 강사 노트 (흔한 오해/질문)
+
+- **오해 1: "LangGraph는 LangChain의 상위호환이라 LCEL을 대체한다."**
+  아니다. 둘은 층위가 다르다. LCEL은 **직선 데이터 변환**, LangGraph는 **상태 있는 제어 흐름**. 노드 내부에서는 여전히 LCEL 체인을 쓴다. 보완 관계임을 강조.
+
+> [!WARNING] 오해 2: "add_messages 같은 reducer 없이 그냥 list를 쓰면 된다."
+> reducer를 안 주면 노드 반환값이 상태를 ==덮어쓴다==(누적이 아니라). 그러면 이전 도구 결과가 날아가 루프가 망가진다. 세션 02의 `append`가 왜 reducer로 표현돼야 하는지 연결해 설명할 것.
+
+- **질문 대비: "이게 세션 02 while 루프랑 결국 같은 거면 왜 굳이?"**
+  같은 본질이지만 그래프는 (1)시각화 (2)체크포인트/재개 (3)Human-in-the-loop (4)분기 추가의 용이함을 **공짜로** 준다. raw 루프에 이걸 다 직접 넣으면 결국 LangGraph를 재발명하게 된다. "추상화 뒤를 아는 사람"이 그래프를 쓰면 강력하다는 게 결론.

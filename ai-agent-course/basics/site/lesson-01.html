@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 모델은 어떻게 동작하나 · AI 에이전트 입문</title>
+<link rel="stylesheet" href="style.css?v=34163edb">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>AI 에이전트 입문</h1><p>기초 + 실전 · 14개 레슨</p></a></div>
+  <div class="nav-group-title">레슨</div>
+  <nav>
+      <a href="lesson-00.html"><span class="num">00</span>AI 시대 이해하기</a>
+      <a href="lesson-01.html" class="active"><span class="num">01</span>AI 모델은 어떻게 동작하나</a>
+      <a href="lesson-02.html"><span class="num">02</span>환각과 한계</a>
+      <a href="lesson-03.html"><span class="num">03</span>토큰 & 요금제</a>
+      <a href="lesson-04.html"><span class="num">04</span>컨텍스트</a>
+      <a href="lesson-05.html"><span class="num">05</span>도구 호출</a>
+      <a href="lesson-06.html"><span class="num">06</span>에이전트</a>
+      <a href="lesson-07.html"><span class="num">07</span>에이전트 활용하기</a>
+      <a href="lesson-08.html"><span class="num">08</span>코드베이스 이해하기</a>
+      <a href="lesson-09.html"><span class="num">09</span>기능 구현하기</a>
+      <a href="lesson-10.html"><span class="num">10</span>버그 발견 및 수정</a>
+      <a href="lesson-11.html"><span class="num">11</span>코드 리뷰 및 테스트</a>
+      <a href="lesson-12.html"><span class="num">12</span>에이전트 맞춤 설정</a>
+      <a href="lesson-13.html"><span class="num">13</span>전체 정리 & 다음 단계</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../advanced/site/index.html">🚀 심화 과정</a>
+  </nav>
+</aside>
+<main class="content md" id="content"></main>
+</div>
+<script type="text/markdown" id="md-src"># 레슨 01 · AI 모델은 어떻게 동작하나
+
+AI 모델이 "정답을 찾는" 게 아니라 "다음에 올 말을 예측한다"는 사실을 이해하면, 앞으로의 모든 내용이 훨씬 쉬워집니다.
+
+## 학습 목표
+
+- 전통적인 소프트웨어(결정론)와 AI 모델(확률론)의 차이를 한 문장으로 설명할 수 있다.
+- AI가 "다음 토큰(다음에 올 단어 조각)"을 예측하는 방식이라는 점을 이해한다.
+- 모델마다 지능·속도·비용이 다르고, 텍스트 외에 이미지·음성 같은 여러 모달리티가 있다는 것을 안다.
+
+## AI 모델은 똑똑한 범용 API다
+
+AI 모델은 아주 똑똑한 범용 API 엔드포인트라고 생각하면 편합니다. 결제를 붙이려고 Stripe를 호출하고, 문자를 보내려고 Twilio를 호출하듯, 다양한 작업을 처리하려고 AI 모델을 호출하는 거죠.
+
+다만 가장 큰 차이가 하나 있습니다. ==같은 요청을 보내도 매번 같은 결과가 보장되지 않습니다.== 이게 일반적인 API와 결정적으로 다른 점입니다.
+
+## 결정론 vs. 확률론
+
+전통적인 소프트웨어는 **결정론적**입니다. 같은 입력을 넣으면 몇 번을 다시 실행해도 똑같은 출력이 나옵니다. 개발자가 "이 입력이 오면 이렇게 처리하라"고 경로를 명시적으로 적어 두었기 때문입니다.
+
+AI 모델은 다릅니다. **확률론적**이라서, 같은 입력에도 모델이 갈 수 있는 길이 여러 갈래입니다.
+
+```mermaid
+flowchart LR
+  subgraph 결정론[결정론 · 전통 소프트웨어]
+    I1[입력] --> P[정해진 한 경로] --> O1[항상 같은 출력]
+  end
+  subgraph 확률론[확률론 · AI 모델]
+    I2[입력 프롬프트] --> A[출력 A]
+    I2 --> B[출력 B]
+    I2 --> C[출력 C]
+  end
+```
+
+그래서 AI를 다룰 때 가장 먼저 기억할 원칙은 이것입니다.
+
+> [!IMPORTANT]
+> =="매번 같은 답이 나올 거라고 절대 가정하지 말 것."==
+
+## 다음 토큰 예측 — 모델은 어떻게 답을 고를까
+
+그럼 모델은 여러 갈래 중 무엇을 출력할지 어떻게 정할까요? 내부적으로 모델은 **다음에 올 텍스트 조각(토큰)을 예측**합니다. 이 예측은 크게 두 가지에 기반합니다.
+
+1. 모델이 **"훈련"된 정보** — 학습 과정에서 본 방대한 데이터
+2. 우리가 입력으로 주는 것, 즉 **"프롬프트"**
+
+더 구체적인 예를 들어 봅시다. 프롬프트로 "하늘은"이라고 주면, 모델은 다음에 올 단어 후보마다 **확률**을 매깁니다.
+
+```
+프롬프트: "하늘은 ___"
+  파랗다 ··· 60%
+  맑다  ··· 20%
+  높다  ··· 15%
+  …    ··· 나머지 5%
+        └ 이 확률 분포에서 하나를 "샘플링"해 다음 토큰을 고른다
+```
+
+그래서 보통은 "파랗다"가 나오지만, 어떤 때는 "맑다"가 뽑히기도 합니다. **확률이 가장 높은 단어가 항상 선택되는 건 아니기 때문**입니다.
+
+이번엔 AI에게 "삶의 의미가 뭐야? 한 단어로 답해 줘"라고 물어본다고 합시다. 모델은 내 입력을 바탕으로 다음에 올 단어를 한 조각씩 예측해 나갑니다. 이때 두 가지를 꼭 기억하세요.
+
+- 같은 모델, 같은 프롬프트여도 **서로 다른 답**이 나올 수 있습니다.
+- 모델이 **지시를 항상 정확히 따르는 것은 아닙니다.** 분명 "한 단어로 답하라"고 했는데도 문장으로 답할 수 있습니다.
+
+```mermaid
+flowchart LR
+  P[프롬프트<br/>삶의 의미는 한 단어로] --> M[모델이 다음 토큰을 확률로 예측]
+  M --> A[사랑 높은 확률]
+  M --> B[행복 그 다음]
+  M --> C[사랑은 사실 길게 갈 수도]
+```
+
+### 왜 "확률론"이 중요할까
+
+같은 프롬프트라도 매번 답이 달라질 수 있다는 건, 단순한 호기심거리가 아니라 **실무에서 큰 의미**를 갖습니다.
+
+- 한 번 잘 나왔다고 **항상 그렇게 나오는 게 아니므로**, 결과는 늘 검증해야 합니다(레슨 02).
+- 답의 품질이 **프롬프트에 크게 좌우되므로**, 좋은 프롬프트를 쓰는 일이 곧 좋은 결과로 이어집니다.
+
+> [!NOTE]
+> 답이 매번 흔들리는 게 곤란하다면 **temperature(온도)** 라는 설정을 낮추면 됩니다. 온도가 낮을수록 "가장 확률 높은 단어"를 더 고집해서, 답이 더 일관되고 재현 가능해집니다(대신 다양성은 줄어듭니다).
+
+## 모델 선택하기 — 어떤 모델을 써야 할까
+
+AI 모델은 지능, 응답 속도, 비용, 전문성이 제각각입니다. 어떤 모델은 빠르고 저렴하지만 깊은 사고가 필요한 어려운 문제는 풀지 못할 수 있고, 어떤 모델은 더 느리고 비싸지만 복잡한 작업일수록 오래 "생각"하며 잘 다룹니다.
+
+| 가벼운 모델 | 강력한 모델 |
+|---|---|
+| 빠름 | 상대적으로 느림 |
+| 저렴함 | 비쌈 |
+| 간단한 작업에 적합 | 복잡하고 어려운 작업에 적합 |
+
+궁극적인 목표는 ==아주 똑똑하면서도, 아주 빠르고, 아주 저렴한== 모델입니다. 그런 모델이 지금 있는지는 결국 "무엇에 쓰느냐(사용 사례)"에 달려 있습니다. 다행히 코딩 작업이라면 요즘 모델들은 이미 충분히 잘합니다. 새 모델이 거의 매달 나오고 성능 한계선도 계속 갱신되니, 앞으로 더 똑똑한 모델을 기대할 수 있습니다.
+
+## 모달리티 — 모델과 대화하는 여러 방식
+
+모델과 상호작용하는 방식을 **모달리티**라고 부릅니다. 텍스트를 입력하는 것 말고도 이미지를 생성하거나, 음성으로 대화하거나, 프롬프트로 동영상을 만들 수도 있습니다. 모델 품질은 빠르게 좋아지는 중이라 최신 릴리스를 주시하는 게 중요합니다. (동영상 생성만 해도 몇 년 전엔 어설펐지만 지금은 꽤 현실적이죠.)
+
+소프트웨어를 만들 때 모달리티를 이렇게 활용할 수 있습니다.
+
+- **텍스트**: 만들고 싶은 제품/기능을 글로 설명하고 AI와 함께 계획을 세우기
+- **이미지**: UI 목업이나 디자인을 이미지로 공유하고, 간격·색상이 안 맞을 때 피드백 주기
+- **음성**: 말한 내용을 받아적어 입력으로 쓰면, 길고 자세한 지시를 일일이 타이핑하지 않아도 됨
+
+## 💡 한 문장 요약
+
+> [!TIP] 한 문장 요약
+> AI 모델은 학습한 정보와 프롬프트를 바탕으로 "다음에 올 토큰"을 확률적으로 예측하기 때문에, 같은 입력에도 답이 달라질 수 있다.
+
+## ✅ 확인 문제
+
+**Q.** AI 모델의 응답을 가장 잘 설명하는 문장은?
+
+**정답.** 확률론적이며 동일한 프롬프트로 실행해도 결과가 달라질 수 있다.
+
+**해설.** AI는 정해진 경로를 따라 항상 같은 답을 내는 결정론적 소프트웨어가 아니라, 다음 토큰을 확률로 예측하므로 같은 프롬프트에도 결과가 달라질 수 있습니다.
+
+## 🔗 다음 / 심화 연결
+
+- **다음 레슨: 02 환각과 한계** — 확률론적으로 동작하는 모델이 왜, 어떤 한계를 갖는지 살펴봅니다.
+- 이 내용은 **8주 심화 과정 세션 1(에이전트 개요)**로 이어집니다.
+</script>
+<script>window.XREF=[["레슨 00", "lesson-00.html"], ["레슨00", "lesson-00.html"], ["레슨 0", "lesson-00.html"], ["레슨0", "lesson-00.html"], ["레슨 01", "lesson-01.html"], ["레슨01", "lesson-01.html"], ["레슨 1", "lesson-01.html"], ["레슨1", "lesson-01.html"], ["레슨 02", "lesson-02.html"], ["레슨02", "lesson-02.html"], ["레슨 2", "lesson-02.html"], ["레슨2", "lesson-02.html"], ["레슨 03", "lesson-03.html"], ["레슨03", "lesson-03.html"], ["레슨 3", "lesson-03.html"], ["레슨3", "lesson-03.html"], ["레슨 04", "lesson-04.html"], ["레슨04", "lesson-04.html"], ["레슨 4", "lesson-04.html"], ["레슨4", "lesson-04.html"], ["레슨 05", "lesson-05.html"], ["레슨05", "lesson-05.html"], ["레슨 5", "lesson-05.html"], ["레슨5", "lesson-05.html"], ["레슨 06", "lesson-06.html"], ["레슨06", "lesson-06.html"], ["레슨 6", "lesson-06.html"], ["레슨6", "lesson-06.html"], ["레슨 07", "lesson-07.html"], ["레슨07", "lesson-07.html"], ["레슨 7", "lesson-07.html"], ["레슨7", "lesson-07.html"], ["레슨 08", "lesson-08.html"], ["레슨08", "lesson-08.html"], ["레슨 8", "lesson-08.html"], ["레슨8", "lesson-08.html"], ["레슨 09", "lesson-09.html"], ["레슨09", "lesson-09.html"], ["레슨 9", "lesson-09.html"], ["레슨9", "lesson-09.html"], ["레슨 10", "lesson-10.html"], ["레슨10", "lesson-10.html"], ["레슨 10", "lesson-10.html"], ["레슨10", "lesson-10.html"], ["레슨 11", "lesson-11.html"], ["레슨11", "lesson-11.html"], ["레슨 11", "lesson-11.html"], ["레슨11", "lesson-11.html"], ["레슨 12", "lesson-12.html"], ["레슨12", "lesson-12.html"], ["레슨 12", "lesson-12.html"], ["레슨12", "lesson-12.html"], ["레슨 13", "lesson-13.html"], ["레슨13", "lesson-13.html"], ["레슨 13", "lesson-13.html"], ["레슨13", "lesson-13.html"], ["세션 01", "../../advanced/site/session-01.html"], ["세션 1", "../../advanced/site/session-01.html"], ["세션01", "../../advanced/site/session-01.html"], ["세션1", "../../advanced/site/session-01.html"], ["세션 02", "../../advanced/site/session-02.html"], ["세션 2", "../../advanced/site/session-02.html"], ["세션02", "../../advanced/site/session-02.html"], ["세션2", "../../advanced/site/session-02.html"], ["세션 03", "../../advanced/site/session-03.html"], ["세션 3", "../../advanced/site/session-03.html"], ["세션03", "../../advanced/site/session-03.html"], ["세션3", "../../advanced/site/session-03.html"], ["세션 04", "../../advanced/site/session-04.html"], ["세션 4", "../../advanced/site/session-04.html"], ["세션04", "../../advanced/site/session-04.html"], ["세션4", "../../advanced/site/session-04.html"], ["세션 05", "../../advanced/site/session-05.html"], ["세션 5", "../../advanced/site/session-05.html"], ["세션05", "../../advanced/site/session-05.html"], ["세션5", "../../advanced/site/session-05.html"], ["세션 06", "../../advanced/site/session-06.html"], ["세션 6", "../../advanced/site/session-06.html"], ["세션06", "../../advanced/site/session-06.html"], ["세션6", "../../advanced/site/session-06.html"], ["세션 07", "../../advanced/site/session-07.html"], ["세션 7", "../../advanced/site/session-07.html"], ["세션07", "../../advanced/site/session-07.html"], ["세션7", "../../advanced/site/session-07.html"], ["세션 08", "../../advanced/site/session-08.html"], ["세션 8", "../../advanced/site/session-08.html"], ["세션08", "../../advanced/site/session-08.html"], ["세션8", "../../advanced/site/session-08.html"]];window.SLUG="lesson-01";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="app.js?v=34163edb"></script>
+</body>
+</html>

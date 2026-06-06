@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회차별 1페이지 요약 · AI Agent 강의</title>
+<link rel="stylesheet" href="style.css?v=34163edb">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1><p>4주 × 2회 · 총 8세션</p></a></div>
+  <div class="nav-group-title">강의</div>
+  <nav>
+      <a href="session-01.html"><span class="num">01</span>AI 에이전트 개요 & 패러다임</a>
+      <a href="session-02.html"><span class="num">02</span>Tool Use / Function Calling의 본질</a>
+      <a href="session-03.html"><span class="num">03</span>추론 & 계획 패턴</a>
+      <a href="session-04.html"><span class="num">04</span>메모리 & 컨텍스트 관리</a>
+      <a href="session-05.html"><span class="num">05</span>LangChain 아키텍처</a>
+      <a href="session-06.html"><span class="num">06</span>LangGraph 상태 그래프</a>
+      <a href="session-07.html"><span class="num">07</span>멀티 에이전트 & 오케스트레이션</a>
+      <a href="session-08.html"><span class="num">08</span>평가·관찰가능성·프로덕션</a>
+  </nav>
+  <div class="nav-group-title">실습</div>
+  <nav>
+      <a href="playground.html">Python 플레이그라운드</a>
+  </nav>
+  <div class="nav-group-title">자료</div>
+  <nav>
+      <a href="map.html">🗺️ 관계 지도</a>
+      <a href="spec.html">공통 데모 예제 명세</a>
+      <a href="handout-one-pagers.html" class="active">회차별 1페이지 요약</a>
+      <a href="handout-discussion.html">토론 질문 카드</a>
+      <a href="glossary.html">용어집(Glossary)</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../basics/site/index.html">🎓 입문 과정</a>
+  </nav>
+</aside>
+<main class="content md" id="content"></main>
+</div>
+<script type="text/markdown" id="md-src"># AI 에이전트 개발 마스터 코스 — 원페이지 핸드아웃
+
+> 중급-고급 개발자 대상 · 개념 중심 8세션(4주 x 2)
+> 공통 토이 예제: **리서치 어시스턴트(Research Assistant)** — 사용자 질문을 받아 필요시 `web_search`/`calculator` 도구를 쓰고 요약해 답하는 단일 에이전트.
+> 표준 시나리오: "2024년 노벨 물리학상 수상자가 누구이고, 그 상금을 3으로 나누면 얼마야?"
+> 진화 매핑: 세션2 raw API 루프 → 세션5 LangChain → 세션6 LangGraph (같은 태스크의 진화)
+
+---
+
+## 세션 1: AI 에이전트 개요 & 패러다임
+
+**핵심 개념**
+- 에이전트 = **환경을 인식하고 목표를 위해 자율적으로 행동**하는 시스템 (단발 LLM 호출과 본질이 다름)
+- 핵심 구성: **Reasoning(인지) – Tools(도구) – Memory(기억) – Planning(계획)**
+- Agentic Loop: **Observe → Think → Act → Observe** 순환 (종료조건 설계가 핵심)
+- **Workflow vs Agent 스펙트럼**: 흐름이 코드로 고정이면 워크플로우, LLM이 다음 행동을 정하면 에이전트
+- 대표 패러다임 개관: ReAct, Plan-and-Execute, Reflection
+- 에이전트가 **적합/부적합한 문제** 구분 — 비용·지연·비결정성 때문에 오버엔지니어링 경계
+- 같은 리서치 작업도 "고정 프롬프트 체인"과 "에이전트"로 만들면 결과가 달라진다
+
+**TL;DR(꼭 기억할 한 문장)**
+==에이전트는 "LLM이 루프 안에서 도구를 호출하며 스스로 다음 행동을 결정하는 시스템"이다.== [[chip:info: Agentic Loop]] [[chip:info: Autonomy]]
+
+**핵심 용어**
+- Agentic Loop: 관찰-추론-행동을 목표/종료조건까지 반복하는 제어 흐름
+- Workflow: LLM 호출 경로가 코드로 고정된 결정적 파이프라인
+- ReAct: 추론(Reason)과 행동(Act)을 번갈아 생성하는 패러다임
+- Autonomy: 인간 개입 없이 행동을 결정하는 정도(자율성)
+
+**자가 점검**
+1. 리서치 어시스턴트를 워크플로우가 아닌 에이전트로 만들면 무엇이 달라지는가?
+2. 어떤 작업에서는 에이전트보다 고정 워크플로우가 더 나은가? 왜?
+
+**✅ 할 수 있게 됨**
+- ✅ 단발 LLM 호출과 에이전트를 자율성·행동·환경·루프 4축으로 구분
+- ✅ 4대 구성요소(Reasoning–Tools–Memory–Planning)를 설명
+- ✅ 임의 시스템을 Workflow↔Agent 스펙트럼 위에 배치
+
+**추가 학습**
+- 문서: Anthropic, "Building Effective Agents" — https://www.anthropic.com/research/building-effective-agents
+- 논문: "ReAct: Synergizing Reasoning and Acting in Language Models" — https://arxiv.org/abs/2210.03629
+
+---
+
+## 세션 2: Tool Use / Function Calling의 본질
+
+**핵심 개념**
+- Tool Use의 본질: LLM은 **함수를 직접 실행하지 않는다** — 호출할 함수명·인자를 **구조화된 출력(JSON)** 으로 제안할 뿐
+- 실행 책임은 항상 **호스트 코드(런타임)** 에 있다 → LLM은 "의도", 코드는 "실행"
+- 도구 스키마(JSON Schema) = 모델에게 주는 **API 계약**: 이름·설명·파라미터 설명이 곧 프롬프트
+- 에이전트 루프를 raw API로 직접 구현: `while(모델이 도구 호출): 도구 실행 → 결과를 메시지로 추가 → 재호출`
+- **정지 조건**: 모델이 도구를 더 안 부르고 최종 텍스트를 내면 종료 / 안전장치 `MAX_TURNS`로 무한 루프 방지
+- 실패한 도구 결과도 **모델이 읽을 수 있는 형태**로 되돌려줘야 자기수정이 가능
+- 핵심 메시지: "프레임워크는 이 루프를 감싼 것일 뿐이다"
+
+**TL;DR**
+==Function Calling은 "LLM이 실행하는 것"이 아니라 "LLM이 함수 호출 의도를 만들고, 코드가 실행 후 결과를 되먹이는 것"이다.== [[chip:info: Tool Schema]] [[chip:info: Stop Condition]]
+
+**핵심 용어**
+- Tool Schema: 도구의 이름/설명/입력 파라미터를 정의한 모델용 계약(JSON Schema)
+- Tool Result: 도구 실행 결과를 모델에게 되돌려주는 메시지
+- Stop Condition: 루프를 멈추는 조건(최종 응답 or MAX_TURNS 초과)
+- Grounding: 도구 결과로 모델 출력을 실제 데이터에 근거시키는 것
+
+**자가 점검**
+1. 표준 시나리오에서 모델은 `web_search`와 `calculator`를 각각 언제·왜 고르는가?
+2. `calculator`가 잘못된 수식으로 실패했을 때, 모델이 스스로 복구하려면 결과를 어떻게 돌려줘야 하나?
+
+**✅ 할 수 있게 됨**
+- ✅ "모델은 함수를 실행하지 않고 호출 의도만 낸다"를 설명
+- ✅ tool_call 결과를 메시지로 다시 주입해 루프를 이어감
+- ✅ MAX_TURNS·정지 조건으로 무한 루프를 방지
+
+**추가 학습**
+- 문서: Anthropic, "Tool Use (Function Calling)" — https://docs.anthropic.com/en/docs/build-with-claude/tool-use
+- 문서: OpenAI, "Function Calling Guide" — https://platform.openai.com/docs/guides/function-calling
+
+---
+
+## 세션 3: 추론 & 계획 패턴
+
+**핵심 개념**
+- 추론(Reasoning)은 **토큰 공간에서의 사고** — 답 전에 사고를 펼쳐 정확도를 높임
+- Chain-of-Thought(CoT): 단계적 사고 명시 / Self-Consistency: 여러 경로 샘플 후 다수결
+- ReAct: 사고와 도구 행동을 교차 → 외부 정보로 추론을 보정(세션2 루프와 직결)
+- **Plan-and-Execute**: 먼저 전체 계획 수립(planner) 후 단계 실행(executor) → 일관성·토큰 절약 (LangGraph로 이어질 복선)
+- Reflection / Reflexion: 자기 출력을 비평·재시도하는 루프
+- Tree-of-Thoughts: 여러 사고 분기를 탐색·평가(탐색 비용↑) 개념 소개
+- 패턴별 trade-off: **비용/지연 vs 정확도/신뢰성** — 작업 성격에 맞게 선택
+
+**TL;DR**
+==추론·계획의 핵심은 "행동하기 전에 생각을 외부화하고, 관찰을 보며 계획을 갱신하는 것"이다.== [[chip:info: ReAct]] [[chip:info: Plan-and-Execute]]
+
+**핵심 용어**
+- Chain-of-Thought: 답 이전에 중간 추론 단계를 생성하는 기법
+- Plan-and-Execute: 계획 수립과 단계 실행을 분리한 아키텍처
+- Reflection: 자신의 산출물을 자체 평가·교정하는 루프
+- Self-Consistency: 여러 추론 경로를 샘플링해 다수결로 답을 고르는 기법
+
+**자가 점검**
+1. 리서치 어시스턴트에서 ReAct와 Plan-and-Execute는 각각 언제 더 유리한가?
+2. Reflection 루프가 무한 반복에 빠지지 않게 하려면 어떤 종료조건이 필요한가?
+
+**✅ 할 수 있게 됨**
+- ✅ CoT/ReAct의 원리와 한계를 설명
+- ✅ ReAct vs Plan-and-Execute를 작업 성격에 따라 선택
+- ✅ Self-consistency/ToT의 적용 시점(검증가능·고실패비용·예산)을 판단
+
+**추가 학습**
+- 논문: "Chain-of-Thought Prompting Elicits Reasoning in LLMs" — https://arxiv.org/abs/2201.11903
+- 논문: "Reflexion: Language Agents with Verbal Reinforcement Learning" — https://arxiv.org/abs/2303.11366
+
+---
+
+## 세션 4: 메모리 & 컨텍스트 관리
+
+**핵심 개념**
+- LLM은 **상태가 없다(stateless)** — 모든 "기억"은 컨텍스트 윈도우에 다시 넣어줘야 한다
+- 컨텍스트 윈도우는 유한·고비용 → 메모리 전략이 필요한 근본 이유
+- 메모리 분류: **단기(대화/scratchpad) vs 장기(외부 저장)**, 작업기억 vs 지식기억
+- 컨텍스트 관리: **요약(summary), 슬라이딩 윈도우, 선택적 회상(truncation)**
+- **RAG 개요**: 검색 증강은 에이전트 메모리의 한 형태(임베딩·벡터DB는 개념 수준)
+- "Lost in the middle" — 긴 컨텍스트의 중간 정보는 잘 활용되지 않음 → 배치 전략 중요
+- 상태(state) 관리가 곧 세션6 LangGraph state로 연결됨
+
+**TL;DR**
+==에이전트의 기억력은 "모델이 기억하는 것"이 아니라 "무엇을·언제·어떻게 컨텍스트에 다시 넣을지의 엔지니어링"이다.== [[chip:info: Context Window]] [[chip:info: RAG]]
+
+**핵심 용어**
+- Context Window: 모델이 한 번에 볼 수 있는 토큰 한계
+- Short-/Long-term Memory: 세션 내 history와 외부 영속 저장의 구분
+- RAG(Retrieval-Augmented Generation): 검색된 외부 지식을 생성에 결합
+- Summarization Buffer: 오래된 대화를 요약으로 압축해 보관하는 메모리
+
+**자가 점검**
+1. 멀티턴 리서치 세션에서 이전 검색 결과를 다음 턴까지 어떻게 보존/회상할까?
+2. 대화가 길어질 때 슬라이딩 윈도우와 요약 중 무엇을, 언제 선택하나?
+
+**✅ 할 수 있게 됨**
+- ✅ "모델은 stateless, 기억은 컨텍스트 재주입의 엔지니어링"임을 설명
+- ✅ 슬라이딩 윈도우와 요약 메모리를 상황에 맞게 선택
+- ✅ RAG가 메모리의 한 형태임을 이해
+
+**추가 학습**
+- 논문: "Lost in the Middle: How Language Models Use Long Contexts" — https://arxiv.org/abs/2307.03172
+- 논문: "MemGPT: Towards LLMs as Operating Systems" — https://arxiv.org/abs/2310.08560
+
+---
+
+## 세션 5: LangChain 아키텍처
+
+**핵심 개념**
+- 프레임워크가 해결하는 문제: 1~2주차에 **직접 짠 루프를 어떻게 추상화**하는가
+- 핵심 추상: Models / Prompts / Tools / Output Parsers / Memory
+- **LCEL(LangChain Expression Language)**: `|` 파이프로 컴포넌트를 합성하는 선언적 방식
+- **Runnable** 인터페이스: invoke/stream/batch — 모든 컴포넌트가 같은 계약을 따름(조합 가능성)
+- AgentExecutor = 세션1의 Agentic Loop / 세션2의 while 루프를 코드로 감싼 것
+- 추상화의 비용/이점: 디버깅 난이도·블랙박스화 → 내부에서 어떤 프롬프트가 나가는지 봐야 함
+- 핵심 메시지: "추상화 뒤에 무엇이 있는지 알고 써라" — 언제 raw API로 내려갈지 판단
+
+**TL;DR**
+==LangChain은 새 개념이 아니라 "Loop + Tools + Memory"를 조립식으로 묶어주는 합성 도구다.== [[chip:info: LCEL]] [[chip:info: Runnable]]
+
+**핵심 용어**
+- LCEL: 파이프 연산자로 컴포넌트를 합성하는 선언적 표현 언어
+- Runnable: invoke/stream/batch를 제공하는 공통 실행 인터페이스
+- AgentExecutor: 도구 호출 루프를 실행하는 LangChain 런타임
+- Output Parser: 모델 출력을 구조화된 형태로 변환하는 컴포넌트
+
+**자가 점검**
+1. 세션2의 raw while 루프를 LangChain으로 재구성하면 무엇이 사라지고(감춰지고) 무엇이 남는가?
+2. LCEL 체인이 기대대로 동작하지 않을 때 가장 먼저 확인할 것은?
+
+**✅ 할 수 있게 됨**
+- ✅ LangChain이 추상화하는 접합부(glue)를 설명
+- ✅ LCEL `|`와 Runnable로 체인을 구성
+- ✅ AgentExecutor 안에 세션 2의 while 루프가 있음을 매핑
+
+**추가 학습**
+- 문서: "LangChain Conceptual Guide / LCEL" — https://python.langchain.com/docs/concepts/lcel/
+- 문서: "LangChain Agents Documentation" — https://python.langchain.com/docs/concepts/agents/
+
+---
+
+## 세션 6: LangGraph 상태 그래프
+
+**핵심 개념**
+- 왜 그래프인가: **순환(cyclic)·조건 분기**가 있는 에이전트 흐름을 모델링하기 위해
+- 핵심 개념: **State, Node, Edge, Conditional Edge**, 그래프 컴파일
+- **State**: 그래프 전체를 흐르며 노드마다 갱신되는 공유 상태(채널/Reducer로 병합)
+- 에이전트 루프 = 상태 머신: 세션2의 while 루프가 노드·엣지로 1:1 대응됨
+- **Conditional Edge**: 상태를 보고 다음 노드를 동적 분기 → 재시도/반복/분기 표현
+- 제어 흐름: 분기, 반복, **Checkpointer(영속화)**, **Human-in-the-loop** 개입 지점
+- 그래프 사고법: "에이전트의 제어 흐름을 그림으로 그릴 수 있어야 한다"
+
+**TL;DR**
+==LangGraph는 에이전트의 제어 흐름을 "상태를 갱신하며 노드 사이를 도는 그래프"로 명시화한다.== [[chip:info: State Graph]] [[chip:info: Conditional Edge]]
+
+**핵심 용어**
+- State Graph: 상태를 공유하며 노드/엣지로 흐름을 정의하는 실행 모델
+- Reducer: 노드가 반환한 부분 상태를 전체 상태에 병합하는 규칙
+- Conditional Edge: 상태값에 따라 다음 노드를 선택하는 동적 분기
+- Checkpointer: 그래프 상태를 저장해 재개/HITL을 가능케 하는 영속화 계층
+
+**자가 점검**
+1. 리서치 루프(검색→정보 부족하면 재검색→계산→답변)를 노드·엣지로 어떻게 그릴까?
+2. Conditional Edge와 노드 안의 단순 if문은 무엇이 다른가?
+
+**✅ 할 수 있게 됨**
+- ✅ 왜 순환·조건분기 흐름에 그래프가 적합한지 설명
+- ✅ State/Node/Edge/Conditional Edge를 구분
+- ✅ Conditional Edge와 노드 내부 if의 차이를 설명
+
+**추가 학습**
+- 문서: "LangGraph Conceptual Guide (State, Nodes, Edges)" — https://langchain-ai.github.io/langgraph/concepts/low_level/
+- 문서: "LangGraph Human-in-the-loop & Persistence" — https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/
+
+---
+
+## 세션 7: 멀티 에이전트 & 오케스트레이션
+
+**핵심 개념**
+- 단일 에이전트의 한계(컨텍스트 과부하·역할 혼재) → **역할 분담**의 동기
+- 오케스트레이션 패턴: **Supervisor(감독자)**, **Network/Swarm**, **Hierarchical(계층)**
+- 에이전트 간 통신 = 결국 **메시지/상태 핸드오프** → 입출력 인터페이스(계약)가 핵심
+- 작업 분배·충돌·중복 방지, 종료·수렴 조건 설계가 어려운 부분
+- 멀티 에이전트의 함정: **비용 폭증·일관성·디버깅 난이도** (병렬 작업의 충돌 교훈)
+- RAG 심화: 멀티 에이전트 + 검색 조합
+- 멀티 에이전트는 "능력 향상"이 아니라 "관심사 분리"의 도구 — 필요할 때만
+
+**TL;DR**
+==멀티 에이전트는 명확한 역할·인터페이스·종료조건이 있을 때만 이득인 "관심사 분리" 도구다.== [[chip:info: Supervisor]] [[chip:info: Handoff]]
+
+**핵심 용어**
+- Supervisor(Orchestrator): 작업을 분해·위임·통합하는 조정 에이전트
+- Handoff: 한 에이전트가 다른 에이전트에게 제어/맥락을 넘기는 행위
+- Network/Swarm: 에이전트들이 서로 직접 통신하는 구조
+- Hierarchical: 감독자-하위 팀이 계층을 이루는 구조
+
+**자가 점검**
+1. 리서치 어시스턴트를 "검색 에이전트 + 계산 에이전트 + 요약 에이전트"로 나누면 이득과 손해는?
+2. 멀티 에이전트가 무한 위임 루프에 빠지지 않게 하려면?
+
+**✅ 할 수 있게 됨**
+- ✅ 단일→멀티 에이전트로 분리해야 할 시점을 판단
+- ✅ Supervisor/Network·Swarm/Hierarchical 패턴을 구분
+- ✅ 멀티 에이전트의 비용 증가(단일 대비 3–10배)를 근거로 제시
+
+**추가 학습**
+- 블로그: Anthropic, "Multi-agent Research System" — https://www.anthropic.com/engineering/multi-agent-research-system
+- 문서: "LangGraph Multi-Agent Architectures" — https://langchain-ai.github.io/langgraph/concepts/multi_agent/
+
+---
+
+## 세션 8: 평가·관찰가능성·프로덕션
+
+**핵심 개념**
+- 에이전트 평가의 어려움: **비결정성·다단계·정답 부재** → 단위 테스트만으로 불충분
+- 평가 축: **최종 결과(outcome)** vs **궤적(trajectory, 도구 호출 경로)** 둘 다 본다
+- 평가 방법: 골든 데이터셋, **LLM-as-a-Judge**, 휴먼 평가의 조합(각각 한계 인지)
+- **관찰가능성**: 트레이싱(LangSmith 등)으로 모든 LLM/도구 호출을 기록·재현
+- 핵심 지표: 성공률, 토큰/비용, 지연(latency), 도구 에러율, 루프 횟수
+- 안전성·가드레일: **프롬프트 인젝션**, 도구 권한 최소화, 휴먼 승인 게이트, 타임아웃/재시도
+- 지속 개선 루프: 트레이스 → 실패 분석 → 데이터셋·프롬프트·도구 개선 → 재평가
+
+**TL;DR**
+==프로덕션 에이전트의 핵심은 "더 똑똑한 모델"이 아니라 "측정·추적·통제 가능한 시스템"으로 만드는 것이다.== [[chip:info: Trajectory]] [[chip:info: Observability]]
+
+**핵심 용어**
+- Trajectory Evaluation: 결과뿐 아니라 행동 경로(도구 호출 순서)를 평가
+- LLM-as-a-Judge: LLM으로 다른 LLM 출력을 채점하는 평가 기법
+- Tracing/Observability: 실행 전 과정을 기록·시각화해 디버깅 가능케 함
+- Guardrail: 입력/출력/행동을 제약하는 안전·정책 장치
+
+**자가 점검**
+1. 리서치 어시스턴트의 "좋은 답변"을 어떻게 정량적으로 평가할 것인가?
+2. 결과는 맞았지만 궤적이 비효율적(불필요한 검색 반복)이라면 어떻게 잡아낼까?
+
+**✅ 할 수 있게 됨**
+- ✅ 에이전트 평가가 어려운 이유(비결정성·다단계·정답부재)를 설명
+- ✅ 최종 결과·trajectory·LLM-as-judge 세 방법론을 적용
+- ✅ LLM-as-judge의 편향과 완화책을 제시
+
+**추가 학습**
+- 문서: "LangSmith — Evaluation & Tracing" — https://docs.smith.langchain.com/
+- 문서/논문: "τ-bench: A Benchmark for Tool-Agent-User Interaction" — https://arxiv.org/abs/2406.12045
+</script>
+<script>window.XREF=[["세션 01", "session-01.html"], ["세션 1", "session-01.html"], ["세션01", "session-01.html"], ["세션1", "session-01.html"], ["S1", "session-01.html"], ["세션 02", "session-02.html"], ["세션 2", "session-02.html"], ["세션02", "session-02.html"], ["세션2", "session-02.html"], ["S2", "session-02.html"], ["세션 03", "session-03.html"], ["세션 3", "session-03.html"], ["세션03", "session-03.html"], ["세션3", "session-03.html"], ["S3", "session-03.html"], ["세션 04", "session-04.html"], ["세션 4", "session-04.html"], ["세션04", "session-04.html"], ["세션4", "session-04.html"], ["S4", "session-04.html"], ["세션 05", "session-05.html"], ["세션 5", "session-05.html"], ["세션05", "session-05.html"], ["세션5", "session-05.html"], ["S5", "session-05.html"], ["세션 06", "session-06.html"], ["세션 6", "session-06.html"], ["세션06", "session-06.html"], ["세션6", "session-06.html"], ["S6", "session-06.html"], ["세션 07", "session-07.html"], ["세션 7", "session-07.html"], ["세션07", "session-07.html"], ["세션7", "session-07.html"], ["S7", "session-07.html"], ["세션 08", "session-08.html"], ["세션 8", "session-08.html"], ["세션08", "session-08.html"], ["세션8", "session-08.html"], ["S8", "session-08.html"], ["AgentExecutor", "session-05.html#6-3-에이전트-조립-세션-02의-while-루프가-agentexecutor로"], ["Agentic Loop", "glossary.html"], ["Autonomy", "session-01.html#1-llm-호출-vs-에이전트-무엇이-다른가"], ["자율성", "session-01.html#1-llm-호출-vs-에이전트-무엇이-다른가"], ["Chain-of-Thought", "session-03.html#1-chain-of-thought-cot-추론의-외재화-개념-강의"], ["CoT", "session-03.html#1-chain-of-thought-cot-추론의-외재화-개념-강의"], ["Checkpointer", "session-06.html#6-3-체크포인트-checkpointer"], ["Conditional Edge", "session-06.html#3-4-conditional-edge-분기"], ["Context Window", "session-04.html#1-컨텍스트-윈도우-제약과-비용-개념-강의"], ["컨텍스트 윈도우", "session-04.html#1-컨텍스트-윈도우-제약과-비용-개념-강의"], ["Grounding", "glossary.html"], ["Guardrail", "session-08.html#4-안전성-가드레일"], ["가드레일", "session-08.html#4-안전성-가드레일"], ["Handoff", "session-07.html#3-에이전트-간-통신-핸드오프-작업-분배"], ["핸드오프", "session-07.html#3-에이전트-간-통신-핸드오프-작업-분배"], ["Hierarchical", "session-07.html#2-3-hierarchical-계층형-패턴"], ["계층형", "session-07.html#2-3-hierarchical-계층형-패턴"], ["Human-in-the-loop", "session-06.html#6-4-human-in-the-loop-개입지점"], ["HITL", "session-06.html#6-4-human-in-the-loop-개입지점"], ["휴먼 게이트", "session-06.html#6-4-human-in-the-loop-개입지점"], ["휴먼 승인 게이트", "session-06.html#6-4-human-in-the-loop-개입지점"], ["LCEL", "session-05.html#4-lcel과-runnable-인터페이스"], ["LLM-as-a-Judge", "glossary.html"], ["Lost in the Middle", "session-04.html#1-2-비용-지연의-구조"], ["MAX_TURNS", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["max_steps", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["recursion_limit", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["MCP", "glossary.html"], ["Memory", "glossary.html"], ["Swarm", "session-07.html#2-2-network-swarm-패턴"], ["Output Parser", "session-05.html#3-4-output-parsers-출력의-구조화"], ["Plan-and-Execute", "session-03.html#3-plan-and-execute-계획과-실행의-분리-개념-강의"], ["Prompt Injection", "session-08.html#4-1-프롬프트-인젝션"], ["프롬프트 인젝션", "session-08.html#4-1-프롬프트-인젝션"], ["RAG", "session-04.html#4-rag-개요-메모리로서의-검색증강-개념-강의"], ["ReAct", "session-01.html#4-1-react-reason-act"], ["Reducer", "session-06.html#3-1-state-그래프를-흐르는-단일-자료구조"], ["Reflection", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["Reflexion", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["자기비판", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["Runnable", "session-05.html#4-lcel과-runnable-인터페이스"], ["Scratchpad", "session-03.html#1-1-핵심-아이디어"], ["Self-Consistency", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["State Graph", "session-06.html#세션-06-langgraph-상태-그래프-기반-에이전트"], ["상태 그래프", "session-06.html#세션-06-langgraph-상태-그래프-기반-에이전트"], ["Stop Condition", "session-02.html#5-정지-조건-무한루프-방지-에러-처리"], ["정지 조건", "session-02.html#5-정지-조건-무한루프-방지-에러-처리"], ["Summarization Buffer", "session-04.html#3-2-요약-메모리-running-summary"], ["요약 메모리", "session-04.html#3-2-요약-메모리-running-summary"], ["Supervisor", "session-07.html#2-1-supervisor-감독자-패턴"], ["Orchestrator", "session-07.html#2-1-supervisor-감독자-패턴"], ["Tool Result", "glossary.html"], ["Tool Schema", "session-02.html#2-도구-스키마-json-schema-설계"], ["도구 스키마", "session-02.html#2-도구-스키마-json-schema-설계"], ["ToolNode", "glossary.html"], ["Trajectory", "session-08.html#2-2-trajectory-궤적-단계별-평가"], ["Tracing", "session-08.html#session-08-평가-관찰가능성-프로덕션"], ["Observability", "session-08.html#session-08-평가-관찰가능성-프로덕션"], ["관찰가능성", "session-08.html#session-08-평가-관찰가능성-프로덕션"], ["Tree-of-Thoughts", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["ToT", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["Workflow", "session-01.html#3-workflow-vs-agent-스펙트럼-anthropic-building-effective-agents"], ["레슨 00", "../../basics/site/lesson-00.html"], ["레슨00", "../../basics/site/lesson-00.html"], ["레슨 0", "../../basics/site/lesson-00.html"], ["레슨0", "../../basics/site/lesson-00.html"], ["레슨 01", "../../basics/site/lesson-01.html"], ["레슨01", "../../basics/site/lesson-01.html"], ["레슨 1", "../../basics/site/lesson-01.html"], ["레슨1", "../../basics/site/lesson-01.html"], ["레슨 02", "../../basics/site/lesson-02.html"], ["레슨02", "../../basics/site/lesson-02.html"], ["레슨 2", "../../basics/site/lesson-02.html"], ["레슨2", "../../basics/site/lesson-02.html"], ["레슨 03", "../../basics/site/lesson-03.html"], ["레슨03", "../../basics/site/lesson-03.html"], ["레슨 3", "../../basics/site/lesson-03.html"], ["레슨3", "../../basics/site/lesson-03.html"], ["레슨 04", "../../basics/site/lesson-04.html"], ["레슨04", "../../basics/site/lesson-04.html"], ["레슨 4", "../../basics/site/lesson-04.html"], ["레슨4", "../../basics/site/lesson-04.html"], ["레슨 05", "../../basics/site/lesson-05.html"], ["레슨05", "../../basics/site/lesson-05.html"], ["레슨 5", "../../basics/site/lesson-05.html"], ["레슨5", "../../basics/site/lesson-05.html"], ["레슨 06", "../../basics/site/lesson-06.html"], ["레슨06", "../../basics/site/lesson-06.html"], ["레슨 6", "../../basics/site/lesson-06.html"], ["레슨6", "../../basics/site/lesson-06.html"], ["레슨 07", "../../basics/site/lesson-07.html"], ["레슨07", "../../basics/site/lesson-07.html"], ["레슨 7", "../../basics/site/lesson-07.html"], ["레슨7", "../../basics/site/lesson-07.html"], ["레슨 08", "../../basics/site/lesson-08.html"], ["레슨08", "../../basics/site/lesson-08.html"], ["레슨 8", "../../basics/site/lesson-08.html"], ["레슨8", "../../basics/site/lesson-08.html"], ["레슨 09", "../../basics/site/lesson-09.html"], ["레슨09", "../../basics/site/lesson-09.html"], ["레슨 9", "../../basics/site/lesson-09.html"], ["레슨9", "../../basics/site/lesson-09.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"]];window.XREF_LOCAL=[["State Graph", "#세션-6-langgraph-상태-그래프", "세션-6-langgraph-상태-그래프"], ["상태 그래프", "#세션-6-langgraph-상태-그래프", "세션-6-langgraph-상태-그래프"], ["Tracing", "#세션-8-평가-관찰가능성-프로덕션", "세션-8-평가-관찰가능성-프로덕션"], ["Observability", "#세션-8-평가-관찰가능성-프로덕션", "세션-8-평가-관찰가능성-프로덕션"], ["관찰가능성", "#세션-8-평가-관찰가능성-프로덕션", "세션-8-평가-관찰가능성-프로덕션"]];window.SLUG="handout-one-pagers";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="app.js?v=34163edb"></script>
+</body>
+</html>
