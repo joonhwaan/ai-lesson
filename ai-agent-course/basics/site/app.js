@@ -285,6 +285,196 @@
     });
   }
 
+  /* ---- 우측 메모 패널 ----
+     강의 내용을 페이지별로 적고(localStorage 자동저장), 전체 메모에서 나중에 찾아본다.
+     서버 없는 정적 사이트라 브라우저 localStorage에 보관. 외부 의존성 없음. */
+  var NP_PREFIX = "aicourse-note:";
+  var NP_OPEN = "aicourse-np-open";
+  var NP_TAB = "aicourse-np-tab";
+
+  function npPageId() { return location.pathname; }
+  function npLoad(id) {
+    try {
+      var raw = localStorage.getItem(NP_PREFIX + id);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { console.error("메모 읽기 실패:", e); return null; }
+  }
+  function npSave(id, text) {
+    try {
+      if (text && text.trim()) {
+        localStorage.setItem(NP_PREFIX + id, JSON.stringify({ t: text, title: document.title || id, u: Date.now() }));
+      } else {
+        localStorage.removeItem(NP_PREFIX + id);
+      }
+    } catch (e) { console.error("메모 저장 실패:", e); }
+  }
+  function npAll() {
+    var out = [];
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf(NP_PREFIX) === 0) {
+          var rec = null;
+          try { rec = JSON.parse(localStorage.getItem(k)); } catch (e) { console.error("메모 파싱 실패:", e); }
+          if (rec && rec.t) out.push({ id: k.slice(NP_PREFIX.length), title: rec.title || k, t: rec.t, u: rec.u || 0 });
+        }
+      }
+    } catch (e) { console.error("메모 목록 실패:", e); }
+    out.sort(function (a, b) { return b.u - a.u; });
+    return out;
+  }
+  function npTime(ms) {
+    if (!ms) return "";
+    var d = new Date(ms), p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+  }
+  function npEsc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  function mountNotepad() {
+    if (document.querySelector(".notepad")) return;     // 중복 mount 방지
+    var id = npPageId();
+
+    var toggle = document.createElement("button");
+    toggle.className = "np-toggle";
+    toggle.setAttribute("aria-label", "메모 열기/닫기");
+    toggle.innerHTML = '<span class="np-toggle-ico">📝</span><span class="np-toggle-txt">메모</span>';
+
+    var panel = document.createElement("aside");
+    panel.className = "notepad";
+    panel.innerHTML =
+      '<div class="np-head">' +
+        '<strong>📝 강의 메모</strong>' +
+        '<button class="np-close" aria-label="닫기">✕</button>' +
+      '</div>' +
+      '<div class="np-tabs">' +
+        '<button class="np-tab active" data-tab="page">이 페이지</button>' +
+        '<button class="np-tab" data-tab="all">전체 메모</button>' +
+      '</div>' +
+      '<div class="np-view np-view-page">' +
+        '<textarea class="np-text" placeholder="이 페이지의 강의 내용을 메모하세요. 자동 저장됩니다."></textarea>' +
+        '<div class="np-status"><span class="np-saved"></span></div>' +
+      '</div>' +
+      '<div class="np-view np-view-all" hidden><div class="np-list"></div></div>' +
+      '<div class="np-foot">' +
+        '<button class="np-export">⤓ 내보내기(.md)</button>' +
+        '<button class="np-clear">이 페이지 지우기</button>' +
+      '</div>';
+
+    document.body.appendChild(toggle);
+    document.body.appendChild(panel);
+
+    var textarea = panel.querySelector(".np-text");
+    var savedEl = panel.querySelector(".np-saved");
+    var listEl = panel.querySelector(".np-list");
+    var viewPage = panel.querySelector(".np-view-page");
+    var viewAll = panel.querySelector(".np-view-all");
+
+    // 현재 페이지 메모 로드
+    var rec = npLoad(id);
+    if (rec && rec.t) { textarea.value = rec.t; savedEl.textContent = "저장됨 · " + npTime(rec.u); }
+
+    // 열림/닫힘 상태 복원
+    function setOpen(open) {
+      panel.classList.toggle("open", open);
+      toggle.classList.toggle("hidden", open);
+      try { localStorage.setItem(NP_OPEN, open ? "1" : "0"); } catch (e) { console.error("상태 저장 실패:", e); }
+    }
+    var wasOpen = false;
+    try { wasOpen = localStorage.getItem(NP_OPEN) === "1"; } catch (e) {}
+    setOpen(wasOpen);
+
+    toggle.addEventListener("click", function () { setOpen(true); textarea.focus(); });
+    panel.querySelector(".np-close").addEventListener("click", function () { setOpen(false); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && panel.classList.contains("open")) setOpen(false);
+    });
+
+    // 자동 저장(디바운스)
+    var timer = null;
+    textarea.addEventListener("input", function () {
+      savedEl.textContent = "저장 중…";
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function () {
+        npSave(id, textarea.value);
+        savedEl.textContent = textarea.value.trim() ? "저장됨 · " + npTime(Date.now()) : "비어 있음";
+      }, 400);
+    });
+
+    // 탭 전환
+    function renderList() {
+      var all = npAll();
+      if (!all.length) { listEl.innerHTML = '<div class="np-empty">아직 메모가 없습니다.<br>각 페이지에서 메모하면 여기 모입니다.</div>'; return; }
+      listEl.innerHTML = all.map(function (n) {
+        var here = n.id === id ? " here" : "";
+        var snip = n.t.replace(/\s+/g, " ").trim().slice(0, 80);
+        return '<div class="np-item' + here + '" data-id="' + npEsc(n.id) + '">' +
+            '<a class="np-item-title" href="' + npEsc(n.id) + '">' + npEsc(n.title) + (here ? ' <span class="np-here">현재</span>' : '') + '</a>' +
+            '<div class="np-item-snip">' + npEsc(snip) + (n.t.length > 80 ? "…" : "") + '</div>' +
+            '<div class="np-item-meta"><span>' + npTime(n.u) + '</span>' +
+              '<button class="np-item-del" data-id="' + npEsc(n.id) + '" aria-label="삭제">삭제</button></div>' +
+          '</div>';
+      }).join("");
+    }
+    panel.querySelectorAll(".np-tab").forEach(function (tb) {
+      tb.addEventListener("click", function () {
+        panel.querySelectorAll(".np-tab").forEach(function (x) { x.classList.remove("active"); });
+        tb.classList.add("active");
+        var all = tb.dataset.tab === "all";
+        viewAll.hidden = !all; viewPage.hidden = all;
+        if (all) renderList();
+        try { localStorage.setItem(NP_TAB, tb.dataset.tab); } catch (e) {}
+      });
+    });
+    // 활성 탭 복원
+    try {
+      if (localStorage.getItem(NP_TAB) === "all") {
+        var allTab = panel.querySelector('.np-tab[data-tab="all"]');
+        if (allTab) allTab.click();
+      }
+    } catch (e) {}
+
+    // 목록 내 삭제(이벤트 위임)
+    listEl.addEventListener("click", function (e) {
+      var del = e.target.closest(".np-item-del");
+      if (!del) return;
+      e.preventDefault();
+      var did = del.dataset.id;
+      try { localStorage.removeItem(NP_PREFIX + did); } catch (err) { console.error("삭제 실패:", err); }
+      if (did === id) { textarea.value = ""; savedEl.textContent = "비어 있음"; }
+      renderList();
+    });
+
+    // 이 페이지 지우기
+    panel.querySelector(".np-clear").addEventListener("click", function () {
+      textarea.value = "";
+      npSave(id, "");
+      savedEl.textContent = "비어 있음";
+    });
+
+    // 내보내기(.md)
+    panel.querySelector(".np-export").addEventListener("click", function () {
+      var all = npAll();
+      if (!all.length) { alert("내보낼 메모가 없습니다."); return; }
+      var md = "# 강의 메모 모음\n\n_내보낸 시각: " + npTime(Date.now()) + "_\n\n" +
+        all.map(function (n) {
+          return "## " + n.title + "\n\n`" + n.id + "` · " + npTime(n.u) + "\n\n" + n.t + "\n";
+        }).join("\n---\n\n");
+      try {
+        var blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = "강의메모.md";
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      } catch (e) { console.error("내보내기 실패:", e); alert("내보내기에 실패했습니다."); }
+    });
+  }
+
   /* ---- 부팅 ---- */
   function render() {
     var src = document.getElementById("md-src");
@@ -311,6 +501,7 @@
         a.addEventListener("click", function () { sidebar.classList.remove("open"); });
       });
     }
+    try { mountNotepad(); } catch (e) { console.error("notepad mount 실패:", e); }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render);
