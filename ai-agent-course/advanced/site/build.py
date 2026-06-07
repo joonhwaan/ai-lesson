@@ -62,6 +62,12 @@ DOCS = [
     ("glossary",            "handouts/glossary.md",          "용어집(Glossary)"),
 ]
 
+# 강사 해설 스크립트(구어체 강의 대본): (slug, 소스 md, 사이드바 제목)
+SCRIPTS = [
+    (f"script-{i:02d}", f"scripts/session-{i:02d}-script.md", f"세션 {i} 해설 스크립트")
+    for i in range(1, 9)
+]
+
 # 데모 코드: (파일, 라벨, 브라우저 실행 가능 여부)
 DEMOS = [
     ("demos/01_raw_agent_loop.py",  "01 · raw 루프 (브라우저 실행 가능)", True),
@@ -446,6 +452,11 @@ def sidebar(active_slug):
     for i, (slug, _src, title, _wk, _desc) in enumerate(SESSIONS, start=1):
         rows.append(link(f"{slug}.html", title, slug, num=f"{i:02d}"))
     rows.append("  </nav>")
+    rows.append('  <div class="nav-group-title">해설 스크립트</div>')
+    rows.append("  <nav>")
+    for i, (slug, _src, _title) in enumerate(SCRIPTS, start=1):
+        rows.append(link(f"{slug}.html", f"세션 {i} 해설", slug, num=f"{i:02d}"))
+    rows.append("  </nav>")
     rows.append('  <div class="nav-group-title">실습</div>')
     rows.append("  <nav>")
     rows.append(link("playground.html", "Python 플레이그라운드", "playground"))
@@ -507,10 +518,21 @@ def render_md_page(slug, md, title):
     (SITE / f"{slug}.html").write_text(html, encoding="utf-8")
 
 
+def script_box_md(slug):
+    """세션 하단 '해설 스크립트' 박스 — 대응 강의 대본 페이지로."""
+    n = int(slug.split("-")[1])
+    return ('\n<div class="related-box">'
+            '\n<div class="related-title">🎙️ 강의 해설 스크립트</div>'
+            '\n<p>이 세션을 말로 풀어 설명하는 강사 대본(쉬운 풀이·비유·예상 질문):</p>'
+            f'\n<ul>\n<li><a href="script-{n:02d}.html">세션 {n} 해설 스크립트</a></li>\n</ul>'
+            '\n</div>\n')
+
+
 def build_md_page(slug, src_rel, title):
     md = read(src_rel)
-    if slug in RELATIONS:               # 세션 페이지: 하단에 '관련 세션' + '입문 연결' 박스
-        md = md.rstrip() + "\n\n" + related_box_md(slug) + "\n" + basics_box_md(slug) + "\n"
+    if slug in RELATIONS:               # 세션 페이지: 하단에 '관련 세션' + '입문 연결' + '해설 스크립트' 박스
+        md = (md.rstrip() + "\n\n" + related_box_md(slug) + "\n"
+              + basics_box_md(slug) + "\n" + script_box_md(slug) + "\n")
     render_md_page(slug, md, title)
 
 
@@ -1016,6 +1038,8 @@ def main():
     for slug, src, title, _wk, _desc in SESSIONS:
         build_md_page(slug, src, title)
     for slug, src, title in DOCS:
+        build_md_page(slug, src, title)
+    for slug, src, title in SCRIPTS:
         build_md_page(slug, src, title)
     build_map()
     build_index()
