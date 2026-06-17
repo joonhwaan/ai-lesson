@@ -1,4 +1,64 @@
-# Session 08 — 평가 · 관찰가능성 · 프로덕션
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평가·관찰가능성·프로덕션 · AI Agent 강의</title>
+<link rel="stylesheet" href="style.css?v=a8d83b15">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1><p>약 5주 · 총 9세션</p></a></div>
+  <div class="nav-group-title">강의</div>
+  <nav>
+      <a href="session-01.html"><span class="num">01</span>AI 에이전트 개요 & 패러다임</a>
+      <a href="session-02.html"><span class="num">02</span>Tool Use / Function Calling의 본질</a>
+      <a href="session-03.html"><span class="num">03</span>추론 & 계획 패턴</a>
+      <a href="session-04.html"><span class="num">04</span>메모리 & 컨텍스트 관리</a>
+      <a href="session-05.html"><span class="num">05</span>RAG 심화 · 검색 증강 생성</a>
+      <a href="session-06.html"><span class="num">06</span>LangChain 아키텍처</a>
+      <a href="session-07.html"><span class="num">07</span>LangGraph 상태 그래프</a>
+      <a href="session-08.html"><span class="num">08</span>멀티 에이전트 & 오케스트레이션</a>
+      <a href="session-09.html" class="active"><span class="num">09</span>평가·관찰가능성·프로덕션</a>
+  </nav>
+  <div class="nav-group-title">해설 스크립트</div>
+  <nav>
+      <a href="script-01.html"><span class="num">01</span>세션 1 해설</a>
+      <a href="script-02.html"><span class="num">02</span>세션 2 해설</a>
+      <a href="script-03.html"><span class="num">03</span>세션 3 해설</a>
+      <a href="script-04.html"><span class="num">04</span>세션 4 해설</a>
+      <a href="script-05.html"><span class="num">05</span>세션 5 해설</a>
+      <a href="script-06.html"><span class="num">06</span>세션 6 해설</a>
+      <a href="script-07.html"><span class="num">07</span>세션 7 해설</a>
+      <a href="script-08.html"><span class="num">08</span>세션 8 해설</a>
+      <a href="script-09.html"><span class="num">09</span>세션 9 해설</a>
+  </nav>
+  <div class="nav-group-title">실습</div>
+  <nav>
+      <a href="playground.html">Python 플레이그라운드</a>
+  </nav>
+  <div class="nav-group-title">자료</div>
+  <nav>
+      <a href="map.html">🗺️ 관계 지도</a>
+      <a href="spec.html">공통 데모 예제 명세</a>
+      <a href="handout-one-pagers.html">회차별 1페이지 요약</a>
+      <a href="handout-discussion.html">토론 질문 카드</a>
+      <a href="glossary.html">용어집(Glossary)</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../basics/site/index.html">🎓 입문 과정</a>
+  </nav>
+</aside>
+<main class="content md" id="content"></main>
+</div>
+<script type="text/markdown" id="md-src"># Session 08 — 평가 · 관찰가능성 · 프로덕션
 
 > 마지막 8번째 세션. 지금까지 만든 **리서치 어시스턴트(단일 → 멀티 에이전트)**를 어떻게 평가하고, 관찰하고, 프로덕션에 안전하게 올릴지 다룬다. 그리고 전체 과정을 회고한다.
 
@@ -165,7 +225,7 @@ flowchart TB
 | 지연 | span별 latency, p50/p95 | 병목 식별 |
 | 품질 | judge 점수, 루브릭 통과율 | 회귀 감지 |
 | 안정성 | 에러율, 재시도 횟수, 타임아웃 | 신뢰성 |
-| 흐름 | 라우팅 결정, 도구 호출 시퀀스 | 디버깅(7회차 멀티 에이전트) |
+| 흐름 | 라우팅 결정, 도구 호출 시퀀스 | 디버깅(8회차 멀티 에이전트) |
 
 ### LangSmith / tracing 도구
 
@@ -178,7 +238,7 @@ os.environ["LANGCHAIN_PROJECT"] = "research-assistant-prod"
 # 이후 app.invoke(...) 가 자동으로 trace 기록 (span 트리 + 토큰/비용)
 ```
 
-> 7회차의 "멀티 에이전트 디버깅 난이도"의 해답이 바로 이 tracing이다. 어느 worker가 비용을 쓰고 어디서 틀렸는지 span으로 본다.
+> 8회차의 "멀티 에이전트 디버깅 난이도"의 해답이 바로 이 tracing이다. 어느 worker가 비용을 쓰고 어디서 틀렸는지 span으로 본다.
 
 ---
 
@@ -334,10 +394,10 @@ S1 개념      → "에이전트란 무엇인가" (자율성 스펙트럼)
 S2 도구      → function calling, web_search + calculator 2개
 S3 루프      → ReAct (검색→관찰→재계획)
 S4 메모리    → 대화 이력, 컨텍스트 관리 + RAG(검색증강) 개념
-S5 LangChain → 프레임워크 추상화 (Models/Prompts/Tools/Parsers, LCEL)
-S6 LangGraph → 상태 그래프화 (노드/엣지/조건분기)
-S7 멀티      → Supervisor + worker 오케스트레이션
-S8 운영      → 평가 · 관찰가능성 · 프로덕션  ← 지금
+S6 LangChain → 프레임워크 추상화 (Models/Prompts/Tools/Parsers, LCEL)
+S7 LangGraph → 상태 그래프화 (노드/엣지/조건분기)
+S8 멀티      → Supervisor + worker 오케스트레이션
+S9 운영      → 평가 · 관찰가능성 · 프로덕션  ← 지금
 ```
 
 ### 한 장으로 보는 프로덕션 에이전트 아키텍처
@@ -348,7 +408,7 @@ S8 운영      → 평가 · 관찰가능성 · 프로덕션  ← 지금
                     +------------------------+
                               ↓
                     +------------------------+
-                    |  Orchestrator(S5–S7)    |  ←─ 메모리(S4)
+                    |  Orchestrator(S6–S8)    |  ←─ 메모리(S4)
                     |  Supervisor + workers   |  ←─ RAG/검색(S4)
                     +------------------------+
                        ↓ 위험 동작 시 ⏸ 휴먼 게이트
@@ -359,16 +419,16 @@ S8 운영      → 평가 · 관찰가능성 · 프로덕션  ← 지금
                     +------------------------+
                     |  가드레일(출력 검증)+응답 |
                     +------------------------+
-              모든 단계 → tracing/평가/비용 모니터링(S8)
+              모든 단계 → tracing/평가/비용 모니터링(S9)
 ```
 
 | 계층 | 회차 | 핵심 결정 |
 |------|------|-----------|
 | 추론 | S1–S3 | 루프 형태(ReAct/Plan-Execute) |
 | 기억 | S4 | 단기/장기, 요약 전략, RAG 청킹·검색 |
-| 구조 | S5–S6 | LangChain 추상화 → LangGraph 상태 그래프 |
-| 협업 | S7 | 단일 vs 멀티, 오케스트레이션 패턴 |
-| 운영 | S8 | 평가·관찰·가드레일·프로덕션 |
+| 구조 | S6–S7 | LangChain 추상화 → LangGraph 상태 그래프 |
+| 협업 | S8 | 단일 vs 멀티, 오케스트레이션 패턴 |
+| 운영 | S9 | 평가·관찰·가드레일·프로덕션 |
 
 ---
 
@@ -381,13 +441,13 @@ S8 운영      → 평가 · 관찰가능성 · 프로덕션  ← 지금
 | 섹션 | 내용 | 참조 회차 |
 |------|------|-----------|
 | 1. 문제 정의 | 무슨 작업? 자율성 수준은? | S1 |
-| 2. 도구 명세 | 도구 2개 이상, 시그니처·권한 | S2, S8-안전 |
-| 3. 루프/구조 | ReAct? LangGraph 상태? | S3, S6 |
+| 2. 도구 명세 | 도구 2개 이상, 시그니처·권한 | S2, S9-안전 |
+| 3. 루프/구조 | ReAct? LangGraph 상태? | S3, S7 |
 | 4. 메모리 | 무엇을 기억/요약하나 | S4 |
-| 5. (선택) 검색/멀티 | RAG 또는 멀티 에이전트 필요성 논증 | S4(RAG), S7 |
-| 6. 평가 루프 | 어떤 방법론 3종을 어떻게 적용 | S8 |
-| 7. 가드레일 | 인젝션·권한·승인 게이트 | S8 |
-| 8. 비용/실패 | 예상 비용, 재시도·폴백 | S8 |
+| 5. (선택) 검색/멀티 | RAG 또는 멀티 에이전트 필요성 논증 | S4(RAG), S8 |
+| 6. 평가 루프 | 어떤 방법론 3종을 어떻게 적용 | S9 |
+| 7. 가드레일 | 인젝션·권한·승인 게이트 | S9 |
+| 8. 비용/실패 | 예상 비용, 재시도·폴백 | S9 |
 
 ### 평가 기준 (자기 점검)
 
@@ -428,7 +488,7 @@ S8 운영      → 평가 · 관찰가능성 · 프로덕션  ← 지금
 → judge도 편향되고 비결정적이다. judge는 **사람 라벨로 정기 보정(calibration)**해야 신뢰할 수 있다. judge는 사람을 대체가 아니라 **확장**한다.
 
 **자주 나오는 질문: "관찰가능성, 처음부터 다 깔아야 하나?"**
-→ 비용·지연·에러율 + 기본 trace부터 시작하면 충분하다. 멀티 에이전트(S7)로 가는 순간 tracing은 선택이 아니라 **필수**가 된다 — 어느 에이전트가 비용을 쓰고 어디서 틀렸는지 trace 없이는 알 수 없다.
+→ 비용·지연·에러율 + 기본 trace부터 시작하면 충분하다. 멀티 에이전트(S8)로 가는 순간 tracing은 선택이 아니라 **필수**가 된다 — 어느 에이전트가 비용을 쓰고 어디서 틀렸는지 trace 없이는 알 수 없다.
 
 ---
 
@@ -436,3 +496,49 @@ S8 운영      → 평가 · 관찰가능성 · 프로덕션  ← 지금
 
 > [!IMPORTANT] 마무리 메시지
 > 8주 과정을 마칩니다. 핵심은 하나입니다 — ==에이전트는 "더 똑똑한 프롬프트"가 아니라, 추론·기억·도구·평가·운영이 맞물린 시스템==입니다. 캡스톤 설계서로 여러분의 첫 시스템을 직접 그려보세요. Q&A를 받습니다.
+
+
+<div class="related-box">
+<div class="related-title">🔗 관련 세션</div>
+<p><b>이 세션과 이어지는 곳</b></p>
+<ul>
+<li><a href="session-01.html">세션 01 · 개념·패러다임</a></li>
+<li><a href="session-02.html">세션 02 · 도구·Function Calling</a></li>
+<li><a href="session-03.html">세션 03 · 추론·계획</a></li>
+<li><a href="session-04.html">세션 04 · 메모리·컨텍스트</a></li>
+<li><a href="session-05.html">세션 05 · RAG·검색증강</a></li>
+<li><a href="session-06.html">세션 06 · LangChain</a></li>
+<li><a href="session-07.html">세션 07 · LangGraph</a></li>
+<li><a href="session-08.html">세션 08 · 멀티에이전트</a></li>
+</ul>
+</div>
+
+
+<div class="related-box">
+<div class="related-title">🎓 입문 과정 연결</div>
+<p>이 세션의 토대가 되는 입문 레슨(개념·활용):</p>
+<ul>
+<li><a href="../../basics/site/lesson-02.html">레슨 02 · 환각과 한계</a></li>
+<li><a href="../../basics/site/lesson-11.html">레슨 11 · 코드 리뷰 및 테스트</a></li>
+<li><a href="../../basics/site/lesson-12.html">레슨 12 · 에이전트 맞춤 설정</a></li>
+</ul>
+</div>
+
+
+<div class="related-box">
+<div class="related-title">🎙️ 강의 해설 스크립트</div>
+<p>이 세션을 말로 풀어 설명하는 강사 대본(쉬운 풀이·비유·예상 질문):</p>
+<ul>
+<li><a href="script-09.html">세션 9 해설 스크립트</a></li>
+</ul>
+</div>
+
+</script>
+<script>window.XREF=[["세션 01", "session-01.html"], ["세션 1", "session-01.html"], ["세션01", "session-01.html"], ["세션1", "session-01.html"], ["S1", "session-01.html"], ["세션 02", "session-02.html"], ["세션 2", "session-02.html"], ["세션02", "session-02.html"], ["세션2", "session-02.html"], ["S2", "session-02.html"], ["세션 03", "session-03.html"], ["세션 3", "session-03.html"], ["세션03", "session-03.html"], ["세션3", "session-03.html"], ["S3", "session-03.html"], ["세션 04", "session-04.html"], ["세션 4", "session-04.html"], ["세션04", "session-04.html"], ["세션4", "session-04.html"], ["S4", "session-04.html"], ["세션 05", "session-05.html"], ["세션 5", "session-05.html"], ["세션05", "session-05.html"], ["세션5", "session-05.html"], ["S5", "session-05.html"], ["세션 06", "session-06.html"], ["세션 6", "session-06.html"], ["세션06", "session-06.html"], ["세션6", "session-06.html"], ["S6", "session-06.html"], ["세션 07", "session-07.html"], ["세션 7", "session-07.html"], ["세션07", "session-07.html"], ["세션7", "session-07.html"], ["S7", "session-07.html"], ["세션 08", "session-08.html"], ["세션 8", "session-08.html"], ["세션08", "session-08.html"], ["세션8", "session-08.html"], ["S8", "session-08.html"], ["세션 09", "session-09.html"], ["세션 9", "session-09.html"], ["세션09", "session-09.html"], ["세션9", "session-09.html"], ["S9", "session-09.html"], ["AgentExecutor", "session-06.html#6-3-에이전트-조립-세션-02의-while-루프가-agentexecutor로"], ["Agentic Loop", "glossary.html"], ["Autonomy", "session-01.html#1-llm-호출-vs-에이전트-무엇이-다른가"], ["자율성", "session-01.html#1-llm-호출-vs-에이전트-무엇이-다른가"], ["Chain-of-Thought", "session-03.html#1-chain-of-thought-cot-추론의-외재화-개념-강의"], ["CoT", "session-03.html#1-chain-of-thought-cot-추론의-외재화-개념-강의"], ["Checkpointer", "session-07.html#6-3-체크포인트-checkpointer"], ["Chunking", "session-05.html#2-색인-파이프라인-청킹-chunking"], ["Conditional Edge", "session-07.html#3-4-conditional-edge-분기"], ["Context Window", "session-04.html#1-컨텍스트-윈도우-제약과-비용-개념-강의"], ["컨텍스트 윈도우", "session-04.html#1-컨텍스트-윈도우-제약과-비용-개념-강의"], ["Embedding", "session-05.html#3-색인-파이프라인-임베딩-embedding"], ["임베딩", "session-05.html#3-색인-파이프라인-임베딩-embedding"], ["Grounding", "glossary.html"], ["Guardrail", "session-09.html#4-안전성-가드레일"], ["가드레일", "session-09.html#4-안전성-가드레일"], ["Handoff", "session-08.html#3-에이전트-간-통신-핸드오프-작업-분배"], ["핸드오프", "session-08.html#3-에이전트-간-통신-핸드오프-작업-분배"], ["Hierarchical", "session-08.html#2-3-hierarchical-계층형-패턴"], ["계층형", "session-08.html#2-3-hierarchical-계층형-패턴"], ["Human-in-the-loop", "session-07.html#6-4-human-in-the-loop-개입지점"], ["HITL", "session-07.html#6-4-human-in-the-loop-개입지점"], ["휴먼 게이트", "session-07.html#6-4-human-in-the-loop-개입지점"], ["휴먼 승인 게이트", "session-07.html#6-4-human-in-the-loop-개입지점"], ["Hybrid Search", "session-05.html#5-3-하이브리드-검색"], ["하이브리드 검색", "session-05.html#5-3-하이브리드-검색"], ["LCEL", "session-06.html#4-lcel과-runnable-인터페이스"], ["LLM-as-a-Judge", "glossary.html"], ["Lost in the Middle", "session-04.html#1-2-비용-지연의-구조"], ["MAX_TURNS", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["max_steps", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["recursion_limit", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["MCP", "glossary.html"], ["Memory", "glossary.html"], ["Metadata Filtering", "session-05.html#5-4-메타데이터-필터링"], ["메타데이터 필터링", "session-05.html#5-4-메타데이터-필터링"], ["Swarm", "session-08.html#2-2-network-swarm-패턴"], ["Output Parser", "session-06.html#3-4-output-parsers-출력의-구조화"], ["Plan-and-Execute", "session-03.html#3-plan-and-execute-계획과-실행의-분리-개념-강의"], ["Prompt Injection", "session-09.html#4-1-프롬프트-인젝션"], ["프롬프트 인젝션", "session-09.html#4-1-프롬프트-인젝션"], ["RAG", "session-04.html#4-rag-개요-메모리로서의-검색증강-개념-강의"], ["ReAct", "session-01.html#4-1-react-reason-act"], ["Reducer", "session-07.html#3-1-state-그래프를-흐르는-단일-자료구조"], ["Reflection", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["Reflexion", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["자기비판", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["Re-ranking", "session-05.html#5-2-재랭킹-re-ranking"], ["재랭킹", "session-05.html#5-2-재랭킹-re-ranking"], ["Runnable", "session-06.html#4-lcel과-runnable-인터페이스"], ["Scratchpad", "session-03.html#1-1-핵심-아이디어"], ["Self-Consistency", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["State Graph", "session-07.html#세션-07-langgraph-상태-그래프-기반-에이전트"], ["상태 그래프", "session-07.html#세션-07-langgraph-상태-그래프-기반-에이전트"], ["Stop Condition", "session-02.html#5-정지-조건-무한루프-방지-에러-처리"], ["정지 조건", "session-02.html#5-정지-조건-무한루프-방지-에러-처리"], ["Summarization Buffer", "session-04.html#3-2-요약-메모리-running-summary"], ["요약 메모리", "session-04.html#3-2-요약-메모리-running-summary"], ["Supervisor", "session-08.html#2-1-supervisor-감독자-패턴"], ["Orchestrator", "session-08.html#2-1-supervisor-감독자-패턴"], ["Tool Result", "glossary.html"], ["Tool Schema", "session-02.html#2-도구-스키마-json-schema-설계"], ["도구 스키마", "session-02.html#2-도구-스키마-json-schema-설계"], ["ToolNode", "glossary.html"], ["Trajectory", "session-09.html#2-2-trajectory-궤적-단계별-평가"], ["Tracing", "session-09.html#session-08-평가-관찰가능성-프로덕션"], ["Observability", "session-09.html#session-08-평가-관찰가능성-프로덕션"], ["관찰가능성", "session-09.html#session-08-평가-관찰가능성-프로덕션"], ["Tree-of-Thoughts", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["ToT", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["Vector DB", "session-05.html#4-색인-파이프라인-벡터db와-ann"], ["벡터DB", "session-05.html#4-색인-파이프라인-벡터db와-ann"], ["Workflow", "session-01.html#3-workflow-vs-agent-스펙트럼-anthropic-building-effective-agents"], ["레슨 00", "../../basics/site/lesson-00.html"], ["레슨00", "../../basics/site/lesson-00.html"], ["레슨 0", "../../basics/site/lesson-00.html"], ["레슨0", "../../basics/site/lesson-00.html"], ["레슨 01", "../../basics/site/lesson-01.html"], ["레슨01", "../../basics/site/lesson-01.html"], ["레슨 1", "../../basics/site/lesson-01.html"], ["레슨1", "../../basics/site/lesson-01.html"], ["레슨 02", "../../basics/site/lesson-02.html"], ["레슨02", "../../basics/site/lesson-02.html"], ["레슨 2", "../../basics/site/lesson-02.html"], ["레슨2", "../../basics/site/lesson-02.html"], ["레슨 03", "../../basics/site/lesson-03.html"], ["레슨03", "../../basics/site/lesson-03.html"], ["레슨 3", "../../basics/site/lesson-03.html"], ["레슨3", "../../basics/site/lesson-03.html"], ["레슨 04", "../../basics/site/lesson-04.html"], ["레슨04", "../../basics/site/lesson-04.html"], ["레슨 4", "../../basics/site/lesson-04.html"], ["레슨4", "../../basics/site/lesson-04.html"], ["레슨 05", "../../basics/site/lesson-05.html"], ["레슨05", "../../basics/site/lesson-05.html"], ["레슨 5", "../../basics/site/lesson-05.html"], ["레슨5", "../../basics/site/lesson-05.html"], ["레슨 06", "../../basics/site/lesson-06.html"], ["레슨06", "../../basics/site/lesson-06.html"], ["레슨 6", "../../basics/site/lesson-06.html"], ["레슨6", "../../basics/site/lesson-06.html"], ["레슨 07", "../../basics/site/lesson-07.html"], ["레슨07", "../../basics/site/lesson-07.html"], ["레슨 7", "../../basics/site/lesson-07.html"], ["레슨7", "../../basics/site/lesson-07.html"], ["레슨 08", "../../basics/site/lesson-08.html"], ["레슨08", "../../basics/site/lesson-08.html"], ["레슨 8", "../../basics/site/lesson-08.html"], ["레슨8", "../../basics/site/lesson-08.html"], ["레슨 09", "../../basics/site/lesson-09.html"], ["레슨09", "../../basics/site/lesson-09.html"], ["레슨 9", "../../basics/site/lesson-09.html"], ["레슨9", "../../basics/site/lesson-09.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"]];window.XREF_LOCAL=[["Guardrail", "#4-안전성-가드레일", "4-안전성-가드레일"], ["가드레일", "#4-안전성-가드레일", "4-안전성-가드레일"], ["Human-in-the-loop", "#4-3-휴먼-승인-게이트-human-in-the-loop", "4-3-휴먼-승인-게이트-human-in-the-loop"], ["HITL", "#4-3-휴먼-승인-게이트-human-in-the-loop", "4-3-휴먼-승인-게이트-human-in-the-loop"], ["휴먼 게이트", "#4-3-휴먼-승인-게이트-human-in-the-loop", "4-3-휴먼-승인-게이트-human-in-the-loop"], ["휴먼 승인 게이트", "#4-3-휴먼-승인-게이트-human-in-the-loop", "4-3-휴먼-승인-게이트-human-in-the-loop"], ["Prompt Injection", "#4-1-프롬프트-인젝션", "4-1-프롬프트-인젝션"], ["프롬프트 인젝션", "#4-1-프롬프트-인젝션", "4-1-프롬프트-인젝션"], ["Trajectory", "#2-2-trajectory-궤적-단계별-평가", "2-2-trajectory-궤적-단계별-평가"], ["Tracing", "#session-08-평가-관찰가능성-프로덕션", "session-08-평가-관찰가능성-프로덕션"], ["Observability", "#session-08-평가-관찰가능성-프로덕션", "session-08-평가-관찰가능성-프로덕션"], ["관찰가능성", "#session-08-평가-관찰가능성-프로덕션", "session-08-평가-관찰가능성-프로덕션"]];window.SLUG="session-09";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="app.js?v=a8d83b15"></script>
+</body>
+</html>

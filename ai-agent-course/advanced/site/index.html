@@ -12,17 +12,18 @@
 <button class="menu-toggle" aria-label="menu">☰</button>
 <div class="layout">
 <aside class="sidebar">
-  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1><p>4주 × 2회 · 총 8세션</p></a></div>
+  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1><p>약 5주 · 총 9세션</p></a></div>
   <div class="nav-group-title">강의</div>
   <nav>
       <a href="session-01.html"><span class="num">01</span>AI 에이전트 개요 & 패러다임</a>
       <a href="session-02.html"><span class="num">02</span>Tool Use / Function Calling의 본질</a>
       <a href="session-03.html"><span class="num">03</span>추론 & 계획 패턴</a>
       <a href="session-04.html"><span class="num">04</span>메모리 & 컨텍스트 관리</a>
-      <a href="session-05.html"><span class="num">05</span>LangChain 아키텍처</a>
-      <a href="session-06.html"><span class="num">06</span>LangGraph 상태 그래프</a>
-      <a href="session-07.html"><span class="num">07</span>멀티 에이전트 & 오케스트레이션</a>
-      <a href="session-08.html"><span class="num">08</span>평가·관찰가능성·프로덕션</a>
+      <a href="session-05.html"><span class="num">05</span>RAG 심화 · 검색 증강 생성</a>
+      <a href="session-06.html"><span class="num">06</span>LangChain 아키텍처</a>
+      <a href="session-07.html"><span class="num">07</span>LangGraph 상태 그래프</a>
+      <a href="session-08.html"><span class="num">08</span>멀티 에이전트 & 오케스트레이션</a>
+      <a href="session-09.html"><span class="num">09</span>평가·관찰가능성·프로덕션</a>
   </nav>
   <div class="nav-group-title">해설 스크립트</div>
   <nav>
@@ -34,6 +35,7 @@
       <a href="script-06.html"><span class="num">06</span>세션 6 해설</a>
       <a href="script-07.html"><span class="num">07</span>세션 7 해설</a>
       <a href="script-08.html"><span class="num">08</span>세션 8 해설</a>
+      <a href="script-09.html"><span class="num">09</span>세션 9 해설</a>
   </nav>
   <div class="nav-group-title">실습</div>
   <nav>
@@ -67,7 +69,7 @@
 
   <div class="notice">
     전 과정이 하나의 토이 태스크 <b>“리서치 어시스턴트”</b>로 이어집니다.
-    raw 루프(세션 2) → LangChain(세션 5) → LangGraph(세션 6)로 같은 예제가 진화합니다.
+    raw 루프(세션 2) → LangChain(세션 6) → LangGraph(세션 7)로 같은 예제가 진화합니다.
     <a href="spec.html">공통 예제 명세 보기 →</a>
   </div>
 
@@ -77,10 +79,11 @@
     <a class="card" href="session-02.html"><div class="week">1주차 · 2회</div><div class="title">02. Tool Use / Function Calling의 본질</div><div class="desc">도구 스키마, 에이전트 루프를 raw API로 직접 구현</div></a>
     <a class="card" href="session-03.html"><div class="week">2주차 · 1회</div><div class="title">03. 추론 & 계획 패턴</div><div class="desc">ReAct, Plan-and-Execute, Reflection, trade-off</div></a>
     <a class="card" href="session-04.html"><div class="week">2주차 · 2회</div><div class="title">04. 메모리 & 컨텍스트 관리</div><div class="desc">단기/장기 기억, 압축·요약, RAG 개요, state 관리</div></a>
-    <a class="card" href="session-05.html"><div class="week">3주차 · 1회</div><div class="title">05. LangChain 아키텍처</div><div class="desc">LCEL, Runnable, 추상화의 비용/이점</div></a>
-    <a class="card" href="session-06.html"><div class="week">3주차 · 2회</div><div class="title">06. LangGraph 상태 그래프</div><div class="desc">State/Node/Edge, 순환, Human-in-the-loop</div></a>
-    <a class="card" href="session-07.html"><div class="week">4주차 · 1회</div><div class="title">07. 멀티 에이전트 & 오케스트레이션</div><div class="desc">Supervisor/Swarm, 핸드오프, RAG 심화</div></a>
-    <a class="card" href="session-08.html"><div class="week">4주차 · 2회</div><div class="title">08. 평가·관찰가능성·프로덕션</div><div class="desc">eval, tracing, 가드레일, 캡스톤</div></a>
+    <a class="card" href="session-05.html"><div class="week">3주차 · 1회</div><div class="title">05. RAG 심화 · 검색 증강 생성</div><div class="desc">청킹·임베딩·벡터DB, top-k/재랭킹/하이브리드, Agentic RAG·검색 평가</div></a>
+    <a class="card" href="session-06.html"><div class="week">3주차 · 2회</div><div class="title">06. LangChain 아키텍처</div><div class="desc">LCEL, Runnable, 추상화의 비용/이점</div></a>
+    <a class="card" href="session-07.html"><div class="week">4주차 · 1회</div><div class="title">07. LangGraph 상태 그래프</div><div class="desc">State/Node/Edge, 순환, Human-in-the-loop</div></a>
+    <a class="card" href="session-08.html"><div class="week">4주차 · 2회</div><div class="title">08. 멀티 에이전트 & 오케스트레이션</div><div class="desc">Supervisor/Swarm, 핸드오프, RAG 심화</div></a>
+    <a class="card" href="session-09.html"><div class="week">5주차 · 1회</div><div class="title">09. 평가·관찰가능성·프로덕션</div><div class="desc">eval, tracing, 가드레일, 캡스톤</div></a>
   </div>
 
   <h2 style="border-bottom:1px solid var(--border);padding-bottom:.25em;">실습 & 자료</h2>

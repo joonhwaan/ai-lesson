@@ -49,10 +49,11 @@ SESSIONS = [
     ("session-02", "sessions/session-02-tool-use.md",   "Tool Use / Function Calling의 본질", "1주차 · 2회", "도구 스키마, 에이전트 루프를 raw API로 직접 구현"),
     ("session-03", "sessions/session-03-reasoning.md",  "추론 & 계획 패턴",                   "2주차 · 1회", "ReAct, Plan-and-Execute, Reflection, trade-off"),
     ("session-04", "sessions/session-04-memory.md",     "메모리 & 컨텍스트 관리",             "2주차 · 2회", "단기/장기 기억, 압축·요약, RAG 개요, state 관리"),
-    ("session-05", "sessions/session-05-langchain.md",  "LangChain 아키텍처",                "3주차 · 1회", "LCEL, Runnable, 추상화의 비용/이점"),
-    ("session-06", "sessions/session-06-langgraph.md",  "LangGraph 상태 그래프",             "3주차 · 2회", "State/Node/Edge, 순환, Human-in-the-loop"),
-    ("session-07", "sessions/session-07-multiagent.md", "멀티 에이전트 & 오케스트레이션",     "4주차 · 1회", "Supervisor/Swarm, 핸드오프, RAG 심화"),
-    ("session-08", "sessions/session-08-eval-ops.md",   "평가·관찰가능성·프로덕션",           "4주차 · 2회", "eval, tracing, 가드레일, 캡스톤"),
+    ("session-05", "sessions/session-05-rag.md",        "RAG 심화 · 검색 증강 생성",          "3주차 · 1회", "청킹·임베딩·벡터DB, top-k/재랭킹/하이브리드, Agentic RAG·검색 평가"),
+    ("session-06", "sessions/session-06-langchain.md",  "LangChain 아키텍처",                "3주차 · 2회", "LCEL, Runnable, 추상화의 비용/이점"),
+    ("session-07", "sessions/session-07-langgraph.md",  "LangGraph 상태 그래프",             "4주차 · 1회", "State/Node/Edge, 순환, Human-in-the-loop"),
+    ("session-08", "sessions/session-08-multiagent.md", "멀티 에이전트 & 오케스트레이션",     "4주차 · 2회", "Supervisor/Swarm, 핸드오프, RAG 심화"),
+    ("session-09", "sessions/session-09-eval-ops.md",   "평가·관찰가능성·프로덕션",           "5주차 · 1회", "eval, tracing, 가드레일, 캡스톤"),
 ]
 
 DOCS = [
@@ -65,7 +66,7 @@ DOCS = [
 # 강사 해설 스크립트(구어체 강의 대본): (slug, 소스 md, 사이드바 제목)
 SCRIPTS = [
     (f"script-{i:02d}", f"scripts/session-{i:02d}-script.md", f"세션 {i} 해설 스크립트")
-    for i in range(1, 9)
+    for i in range(1, 10)
 ]
 
 # 데모 코드: (파일, 라벨, 브라우저 실행 가능 여부)
@@ -82,48 +83,54 @@ SHORT = {
     "session-01": "개념·패러다임",
     "session-02": "도구·Function Calling",
     "session-03": "추론·계획",
-    "session-04": "메모리·RAG",
-    "session-05": "LangChain",
-    "session-06": "LangGraph",
-    "session-07": "멀티에이전트",
-    "session-08": "평가·운영",
+    "session-04": "메모리·컨텍스트",
+    "session-05": "RAG·검색증강",
+    "session-06": "LangChain",
+    "session-07": "LangGraph",
+    "session-08": "멀티에이전트",
+    "session-09": "평가·운영",
 }
 
 # 세션별 관계: forward = 이 세션과 이어지는/참조하는 세션, back = 이 세션을 참조하는 세션
 RELATIONS = {
     "session-01": {"forward": ["session-02"],
-                   "back": ["session-02", "session-08"]},
+                   "back": ["session-02", "session-09"]},
     "session-02": {"forward": ["session-01", "session-03"],
-                   "back": ["session-05", "session-06", "session-08"]},
+                   "back": ["session-06", "session-07", "session-09"]},
     "session-03": {"forward": ["session-02", "session-04"],
-                   "back": ["session-04", "session-08"]},
-    "session-04": {"forward": ["session-03", "session-05", "session-06"],
-                   "back": ["session-06", "session-07", "session-08"]},
-    "session-05": {"forward": ["session-02", "session-06"],
-                   "back": ["session-06", "session-07", "session-08"]},
-    "session-06": {"forward": ["session-02", "session-04", "session-05", "session-07"],
-                   "back": ["session-07", "session-08"]},
-    "session-07": {"forward": ["session-05", "session-06", "session-08"],
-                   "back": ["session-08"]},
-    "session-08": {"forward": ["session-01", "session-02", "session-03", "session-04",
-                               "session-05", "session-06", "session-07"],
+                   "back": ["session-04", "session-09"]},
+    "session-04": {"forward": ["session-03", "session-05", "session-06", "session-07"],
+                   "back": ["session-05", "session-07", "session-08", "session-09"]},
+    "session-05": {"forward": ["session-04", "session-08", "session-09"],
+                   "back": ["session-04", "session-08", "session-09"]},
+    "session-06": {"forward": ["session-02", "session-07"],
+                   "back": ["session-07", "session-08", "session-09"]},
+    "session-07": {"forward": ["session-02", "session-04", "session-06", "session-08"],
+                   "back": ["session-08", "session-09"]},
+    "session-08": {"forward": ["session-05", "session-06", "session-07", "session-09"],
+                   "back": ["session-09"]},
+    "session-09": {"forward": ["session-01", "session-02", "session-03", "session-04",
+                               "session-05", "session-06", "session-07", "session-08"],
                    "back": []},
 }
 
 # 개념 ↔ 세션 매트릭스(용어집 축약). (개념, [세션슬러그...], 한줄설명)
 CONCEPTS = [
     ("Agentic Loop (관찰→추론→행동)", ["session-01", "session-02"], "에이전트 제어 흐름의 심장"),
-    ("Tool Use / Function Calling",   ["session-02", "session-05"], "도구 스키마·호출·결과 재주입"),
+    ("Tool Use / Function Calling",   ["session-02", "session-06"], "도구 스키마·호출·결과 재주입"),
     ("ReAct",                          ["session-01", "session-03"], "추론과 행동을 교차 생성"),
     ("Plan-and-Execute / Reflection",  ["session-03"],               "계획 분리·자기비평 루프"),
     ("Memory (단기/장기)",             ["session-04"],               "컨텍스트 재주입의 엔지니어링"),
-    ("RAG (검색 증강)",                ["session-04", "session-07"], "외부 지식을 생성에 결합"),
-    ("LCEL / Runnable",                ["session-05"],               "선언적 합성·공통 실행 인터페이스"),
-    ("State Graph (State/Node/Edge)",  ["session-06"],               "while 루프의 1급 시민화"),
-    ("Human-in-the-loop",              ["session-06", "session-08"], "고위험 동작 전 사람 승인"),
-    ("Supervisor / Handoff",           ["session-07"],               "작업 분해·위임·제어권 이양"),
-    ("평가·Trajectory / LLM-as-Judge", ["session-08"],               "결과+경로 평가·관찰가능성"),
-    ("가드레일 / Prompt Injection",    ["session-02", "session-08"], "외부 데이터=신뢰 불가, 안전장치"),
+    ("RAG (검색 증강)",                ["session-04", "session-05", "session-08"], "외부 지식을 생성에 결합"),
+    ("임베딩 / 벡터DB",                ["session-05"],               "의미 벡터화·ANN 근사 최근접 검색"),
+    ("청킹 / 재랭킹·하이브리드 검색",  ["session-05"],               "검색 단위 분할·정확도 향상 기법"),
+    ("Agentic RAG (쿼리 재작성·self-RAG)", ["session-05"],           "검색 여부·횟수를 에이전트가 결정"),
+    ("LCEL / Runnable",                ["session-06"],               "선언적 합성·공통 실행 인터페이스"),
+    ("State Graph (State/Node/Edge)",  ["session-07"],               "while 루프의 1급 시민화"),
+    ("Human-in-the-loop",              ["session-07", "session-09"], "고위험 동작 전 사람 승인"),
+    ("Supervisor / Handoff",           ["session-08"],               "작업 분해·위임·제어권 이양"),
+    ("평가·Trajectory / LLM-as-Judge", ["session-09"],               "결과+경로 평가·관찰가능성"),
+    ("가드레일 / Prompt Injection",    ["session-02", "session-09"], "외부 데이터=신뢰 불가, 안전장치"),
 ]
 
 
@@ -408,10 +415,11 @@ BASICS_MAP = {
     "session-02": ["05", "08"],
     "session-03": ["09", "10"],
     "session-04": ["03", "04", "07"],
-    "session-05": ["12"],
+    "session-05": ["04", "07"],
     "session-06": ["12"],
-    "session-07": ["06"],
-    "session-08": ["02", "11", "12"],
+    "session-07": ["12"],
+    "session-08": ["06"],
+    "session-09": ["02", "11", "12"],
 }
 BASICS_LESSON_NUMS = [f"{i:02d}" for i in range(14)]   # 역링크용
 
@@ -446,7 +454,7 @@ def sidebar(active_slug):
 
     rows = []
     rows.append('  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1>'
-                '<p>4주 × 2회 · 총 8세션</p></a></div>')
+                '<p>약 5주 · 총 9세션</p></a></div>')
     rows.append('  <div class="nav-group-title">강의</div>')
     rows.append("  <nav>")
     for i, (slug, _src, title, _wk, _desc) in enumerate(SESSIONS, start=1):
@@ -544,7 +552,7 @@ def build_map():
         for slug, *_ in SESSIONS
     )
     flow = "\n".join(
-        f'  SESSION0{i} --> SESSION0{i+1}' for i in range(1, 8)
+        f'  SESSION0{i} --> SESSION0{i+1}' for i in range(1, 9)
     )
     clicks = "\n".join(
         f'  click {slug.replace("-", "").upper()} "{slug}.html"' for slug, *_ in SESSIONS
@@ -604,8 +612,8 @@ def build_portal():
         '  <a class="card" href="basics/site/index.html"><div class="week">입문 · 14레슨</div>'
         '<div class="title">🎓 AI 에이전트 입문</div>'
         '<div class="desc">AI가 어떻게·왜 동작하는지 + 코딩 에이전트 실전 활용. 개념·멘탈 모델 중심.</div></a>\n'
-        '  <a class="card" href="advanced/site/index.html"><div class="week">심화 · 8세션</div>'
-        '<div class="title">🚀 AI Agent 개발 (8주)</div>'
+        '  <a class="card" href="advanced/site/index.html"><div class="week">심화 · 9세션</div>'
+        '<div class="title">🚀 AI Agent 개발 (약 5주)</div>'
         '<div class="desc">raw API → LangChain → LangGraph로 에이전트를 직접 빌드. 하나의 예제로 관통.</div></a>\n'
         '  <a class="card" href="graph.html"><div class="week">시각화</div>'
         '<div class="title">🕸️ 지식 그래프</div>'
@@ -657,7 +665,7 @@ graph LR
 """
     md = md.replace("</script", "<\\/script")
     portal_xref = []
-    for i in range(1, 9):
+    for i in range(1, 10):
         href = f"advanced/site/session-{i:02d}.html"
         for txt in (f"세션 {i:02d}", f"세션 {i}", f"세션{i:02d}", f"세션{i}"):
             portal_xref.append([txt, href])
@@ -823,7 +831,7 @@ def build_graph():
     for i, (slug, _src, _t, _wk, _desc) in enumerate(SESSIONS, 1):
         nodes.append({"id": slug, "label": f"S{i} {SHORT[slug]}",
                       "type": "session", "href": f"advanced/site/{slug}.html"})
-    for i in range(1, 8):
+    for i in range(1, 9):
         links.append({"source": f"session-{i:02d}", "target": f"session-{i+1:02d}", "kind": "path"})
     for slug, rel in RELATIONS.items():
         for t in rel.get("forward", []):
@@ -886,7 +894,7 @@ def build_index():
 
   <div class="notice">
     전 과정이 하나의 토이 태스크 <b>“리서치 어시스턴트”</b>로 이어집니다.
-    raw 루프(세션 2) → LangChain(세션 5) → LangGraph(세션 6)로 같은 예제가 진화합니다.
+    raw 루프(세션 2) → LangChain(세션 6) → LangGraph(세션 7)로 같은 예제가 진화합니다.
     <a href="spec.html">공통 예제 명세 보기 →</a>
   </div>
 

@@ -353,7 +353,7 @@ calculator("11000000 / 3")  → 3666666.67   ✅
 
 ## 다음 시간 예고
 
-세션 03 **추론(Reasoning) & 계획(Planning) 패턴** — 이 `while` 루프 "안에서 다음에 무엇을 할지 결정하는 머리"를 다룬다. CoT·ReAct·Plan-and-Execute·Reflection을 같은 리서치 과제에 적용해 trace를 비교한다. (프레임워크 LangChain/LangGraph로의 이식은 세션 05~06)
+세션 03 **추론(Reasoning) & 계획(Planning) 패턴** — 이 `while` 루프 "안에서 다음에 무엇을 할지 결정하는 머리"를 다룬다. CoT·ReAct·Plan-and-Execute·Reflection을 같은 리서치 과제에 적용해 trace를 비교한다. (프레임워크 LangChain/LangGraph로의 이식은 세션 06~07)
 
 ---
 

@@ -18,7 +18,7 @@
 
 <div class="cards">
   <a class="card" href="basics/site/index.html"><div class="week">입문 · 14레슨</div><div class="title">🎓 AI 에이전트 입문</div><div class="desc">AI가 어떻게·왜 동작하는지 + 코딩 에이전트 실전 활용. 개념·멘탈 모델 중심.</div></a>
-  <a class="card" href="advanced/site/index.html"><div class="week">심화 · 8세션</div><div class="title">🚀 AI Agent 개발 (8주)</div><div class="desc">raw API → LangChain → LangGraph로 에이전트를 직접 빌드. 하나의 예제로 관통.</div></a>
+  <a class="card" href="advanced/site/index.html"><div class="week">심화 · 9세션</div><div class="title">🚀 AI Agent 개발 (약 5주)</div><div class="desc">raw API → LangChain → LangGraph로 에이전트를 직접 빌드. 하나의 예제로 관통.</div></a>
   <a class="card" href="graph.html"><div class="week">시각화</div><div class="title">🕸️ 지식 그래프</div><div class="desc">세션·레슨·용어가 어떻게 연결되는지 옵시디언식 그래프로 탐색.</div></a>
 </div>
 
@@ -30,13 +30,14 @@ graph LR
   SESSION01["S1 개념·패러다임"]
   SESSION02["S2 도구·Function Calling"]
   SESSION03["S3 추론·계획"]
-  SESSION04["S4 메모리·RAG"]
-  SESSION05["S5 LangChain"]
-  SESSION06["S6 LangGraph"]
-  SESSION07["S7 멀티에이전트"]
-  SESSION08["S8 평가·운영"]
+  SESSION04["S4 메모리·컨텍스트"]
+  SESSION05["S5 RAG·검색증강"]
+  SESSION06["S6 LangChain"]
+  SESSION07["S7 LangGraph"]
+  SESSION08["S8 멀티에이전트"]
+  SESSION09["S9 평가·운영"]
   B ==> SESSION01
-  SESSION01 --> SESSION02 --> SESSION03 --> SESSION04 --> SESSION05 --> SESSION06 --> SESSION07 --> SESSION08
+  SESSION01 --> SESSION02 --> SESSION03 --> SESSION04 --> SESSION05 --> SESSION06 --> SESSION07 --> SESSION08 --> SESSION09
   click B "basics/site/index.html"
   click SESSION01 "advanced/site/session-01.html"
   click SESSION02 "advanced/site/session-02.html"
@@ -46,6 +47,7 @@ graph LR
   click SESSION06 "advanced/site/session-06.html"
   click SESSION07 "advanced/site/session-07.html"
   click SESSION08 "advanced/site/session-08.html"
+  click SESSION09 "advanced/site/session-09.html"
 ```
 
 > [!NOTE]
@@ -60,15 +62,16 @@ graph LR
 | 레슨 01 · 레슨 06 · 레슨 07 | 세션 1 — 개념·패러다임 |
 | 레슨 05 · 레슨 08 | 세션 2 — 도구·Function Calling |
 | 레슨 09 · 레슨 10 | 세션 3 — 추론·계획 |
-| 레슨 03 · 레슨 04 · 레슨 07 | 세션 4 — 메모리·RAG |
-| 레슨 12 | 세션 5 — LangChain |
-| 레슨 12 | 세션 6 — LangGraph |
-| 레슨 06 | 세션 7 — 멀티에이전트 |
-| 레슨 02 · 레슨 11 · 레슨 12 | 세션 8 — 평가·운영 |
+| 레슨 03 · 레슨 04 · 레슨 07 | 세션 4 — 메모리·컨텍스트 |
+| 레슨 04 · 레슨 07 | 세션 5 — RAG·검색증강 |
+| 레슨 12 | 세션 6 — LangChain |
+| 레슨 12 | 세션 7 — LangGraph |
+| 레슨 06 | 세션 8 — 멀티에이전트 |
+| 레슨 02 · 레슨 11 · 레슨 12 | 세션 9 — 평가·운영 |
 
 > 처음이라면 **입문 과정**부터, 직접 구현이 목표라면 **심화 과정**으로 바로 시작하세요.
 </script>
-<script>window.XREF=[["세션 01", "advanced/site/session-01.html"], ["세션 1", "advanced/site/session-01.html"], ["세션01", "advanced/site/session-01.html"], ["세션1", "advanced/site/session-01.html"], ["세션 02", "advanced/site/session-02.html"], ["세션 2", "advanced/site/session-02.html"], ["세션02", "advanced/site/session-02.html"], ["세션2", "advanced/site/session-02.html"], ["세션 03", "advanced/site/session-03.html"], ["세션 3", "advanced/site/session-03.html"], ["세션03", "advanced/site/session-03.html"], ["세션3", "advanced/site/session-03.html"], ["세션 04", "advanced/site/session-04.html"], ["세션 4", "advanced/site/session-04.html"], ["세션04", "advanced/site/session-04.html"], ["세션4", "advanced/site/session-04.html"], ["세션 05", "advanced/site/session-05.html"], ["세션 5", "advanced/site/session-05.html"], ["세션05", "advanced/site/session-05.html"], ["세션5", "advanced/site/session-05.html"], ["세션 06", "advanced/site/session-06.html"], ["세션 6", "advanced/site/session-06.html"], ["세션06", "advanced/site/session-06.html"], ["세션6", "advanced/site/session-06.html"], ["세션 07", "advanced/site/session-07.html"], ["세션 7", "advanced/site/session-07.html"], ["세션07", "advanced/site/session-07.html"], ["세션7", "advanced/site/session-07.html"], ["세션 08", "advanced/site/session-08.html"], ["세션 8", "advanced/site/session-08.html"], ["세션08", "advanced/site/session-08.html"], ["세션8", "advanced/site/session-08.html"], ["레슨 00", "basics/site/lesson-00.html"], ["레슨00", "basics/site/lesson-00.html"], ["레슨 0", "basics/site/lesson-00.html"], ["레슨0", "basics/site/lesson-00.html"], ["레슨 01", "basics/site/lesson-01.html"], ["레슨01", "basics/site/lesson-01.html"], ["레슨 1", "basics/site/lesson-01.html"], ["레슨1", "basics/site/lesson-01.html"], ["레슨 02", "basics/site/lesson-02.html"], ["레슨02", "basics/site/lesson-02.html"], ["레슨 2", "basics/site/lesson-02.html"], ["레슨2", "basics/site/lesson-02.html"], ["레슨 03", "basics/site/lesson-03.html"], ["레슨03", "basics/site/lesson-03.html"], ["레슨 3", "basics/site/lesson-03.html"], ["레슨3", "basics/site/lesson-03.html"], ["레슨 04", "basics/site/lesson-04.html"], ["레슨04", "basics/site/lesson-04.html"], ["레슨 4", "basics/site/lesson-04.html"], ["레슨4", "basics/site/lesson-04.html"], ["레슨 05", "basics/site/lesson-05.html"], ["레슨05", "basics/site/lesson-05.html"], ["레슨 5", "basics/site/lesson-05.html"], ["레슨5", "basics/site/lesson-05.html"], ["레슨 06", "basics/site/lesson-06.html"], ["레슨06", "basics/site/lesson-06.html"], ["레슨 6", "basics/site/lesson-06.html"], ["레슨6", "basics/site/lesson-06.html"], ["레슨 07", "basics/site/lesson-07.html"], ["레슨07", "basics/site/lesson-07.html"], ["레슨 7", "basics/site/lesson-07.html"], ["레슨7", "basics/site/lesson-07.html"], ["레슨 08", "basics/site/lesson-08.html"], ["레슨08", "basics/site/lesson-08.html"], ["레슨 8", "basics/site/lesson-08.html"], ["레슨8", "basics/site/lesson-08.html"], ["레슨 09", "basics/site/lesson-09.html"], ["레슨09", "basics/site/lesson-09.html"], ["레슨 9", "basics/site/lesson-09.html"], ["레슨9", "basics/site/lesson-09.html"], ["레슨 10", "basics/site/lesson-10.html"], ["레슨10", "basics/site/lesson-10.html"], ["레슨 10", "basics/site/lesson-10.html"], ["레슨10", "basics/site/lesson-10.html"], ["레슨 11", "basics/site/lesson-11.html"], ["레슨11", "basics/site/lesson-11.html"], ["레슨 11", "basics/site/lesson-11.html"], ["레슨11", "basics/site/lesson-11.html"], ["레슨 12", "basics/site/lesson-12.html"], ["레슨12", "basics/site/lesson-12.html"], ["레슨 12", "basics/site/lesson-12.html"], ["레슨12", "basics/site/lesson-12.html"], ["레슨 13", "basics/site/lesson-13.html"], ["레슨13", "basics/site/lesson-13.html"], ["레슨 13", "basics/site/lesson-13.html"], ["레슨13", "basics/site/lesson-13.html"]];window.SLUG="_portal";</script>
+<script>window.XREF=[["세션 01", "advanced/site/session-01.html"], ["세션 1", "advanced/site/session-01.html"], ["세션01", "advanced/site/session-01.html"], ["세션1", "advanced/site/session-01.html"], ["세션 02", "advanced/site/session-02.html"], ["세션 2", "advanced/site/session-02.html"], ["세션02", "advanced/site/session-02.html"], ["세션2", "advanced/site/session-02.html"], ["세션 03", "advanced/site/session-03.html"], ["세션 3", "advanced/site/session-03.html"], ["세션03", "advanced/site/session-03.html"], ["세션3", "advanced/site/session-03.html"], ["세션 04", "advanced/site/session-04.html"], ["세션 4", "advanced/site/session-04.html"], ["세션04", "advanced/site/session-04.html"], ["세션4", "advanced/site/session-04.html"], ["세션 05", "advanced/site/session-05.html"], ["세션 5", "advanced/site/session-05.html"], ["세션05", "advanced/site/session-05.html"], ["세션5", "advanced/site/session-05.html"], ["세션 06", "advanced/site/session-06.html"], ["세션 6", "advanced/site/session-06.html"], ["세션06", "advanced/site/session-06.html"], ["세션6", "advanced/site/session-06.html"], ["세션 07", "advanced/site/session-07.html"], ["세션 7", "advanced/site/session-07.html"], ["세션07", "advanced/site/session-07.html"], ["세션7", "advanced/site/session-07.html"], ["세션 08", "advanced/site/session-08.html"], ["세션 8", "advanced/site/session-08.html"], ["세션08", "advanced/site/session-08.html"], ["세션8", "advanced/site/session-08.html"], ["세션 09", "advanced/site/session-09.html"], ["세션 9", "advanced/site/session-09.html"], ["세션09", "advanced/site/session-09.html"], ["세션9", "advanced/site/session-09.html"], ["레슨 00", "basics/site/lesson-00.html"], ["레슨00", "basics/site/lesson-00.html"], ["레슨 0", "basics/site/lesson-00.html"], ["레슨0", "basics/site/lesson-00.html"], ["레슨 01", "basics/site/lesson-01.html"], ["레슨01", "basics/site/lesson-01.html"], ["레슨 1", "basics/site/lesson-01.html"], ["레슨1", "basics/site/lesson-01.html"], ["레슨 02", "basics/site/lesson-02.html"], ["레슨02", "basics/site/lesson-02.html"], ["레슨 2", "basics/site/lesson-02.html"], ["레슨2", "basics/site/lesson-02.html"], ["레슨 03", "basics/site/lesson-03.html"], ["레슨03", "basics/site/lesson-03.html"], ["레슨 3", "basics/site/lesson-03.html"], ["레슨3", "basics/site/lesson-03.html"], ["레슨 04", "basics/site/lesson-04.html"], ["레슨04", "basics/site/lesson-04.html"], ["레슨 4", "basics/site/lesson-04.html"], ["레슨4", "basics/site/lesson-04.html"], ["레슨 05", "basics/site/lesson-05.html"], ["레슨05", "basics/site/lesson-05.html"], ["레슨 5", "basics/site/lesson-05.html"], ["레슨5", "basics/site/lesson-05.html"], ["레슨 06", "basics/site/lesson-06.html"], ["레슨06", "basics/site/lesson-06.html"], ["레슨 6", "basics/site/lesson-06.html"], ["레슨6", "basics/site/lesson-06.html"], ["레슨 07", "basics/site/lesson-07.html"], ["레슨07", "basics/site/lesson-07.html"], ["레슨 7", "basics/site/lesson-07.html"], ["레슨7", "basics/site/lesson-07.html"], ["레슨 08", "basics/site/lesson-08.html"], ["레슨08", "basics/site/lesson-08.html"], ["레슨 8", "basics/site/lesson-08.html"], ["레슨8", "basics/site/lesson-08.html"], ["레슨 09", "basics/site/lesson-09.html"], ["레슨09", "basics/site/lesson-09.html"], ["레슨 9", "basics/site/lesson-09.html"], ["레슨9", "basics/site/lesson-09.html"], ["레슨 10", "basics/site/lesson-10.html"], ["레슨10", "basics/site/lesson-10.html"], ["레슨 10", "basics/site/lesson-10.html"], ["레슨10", "basics/site/lesson-10.html"], ["레슨 11", "basics/site/lesson-11.html"], ["레슨11", "basics/site/lesson-11.html"], ["레슨 11", "basics/site/lesson-11.html"], ["레슨11", "basics/site/lesson-11.html"], ["레슨 12", "basics/site/lesson-12.html"], ["레슨12", "basics/site/lesson-12.html"], ["레슨 12", "basics/site/lesson-12.html"], ["레슨12", "basics/site/lesson-12.html"], ["레슨 13", "basics/site/lesson-13.html"], ["레슨13", "basics/site/lesson-13.html"], ["레슨 13", "basics/site/lesson-13.html"], ["레슨13", "basics/site/lesson-13.html"]];window.SLUG="_portal";</script>
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
