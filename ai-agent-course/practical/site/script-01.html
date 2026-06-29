@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세션 1 해설 스크립트 · 코딩 에이전트 실전</title>
+<link rel="stylesheet" href="style.css?v=a8d83b15">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>코딩 에이전트 실전</h1><p>실전 활용 · 7세션</p></a></div>
+  <div class="nav-group-title">세션</div>
+  <nav>
+      <a href="session-01.html"><span class="num">01</span>워크플로 손에 익히기</a>
+      <a href="session-02.html"><span class="num">02</span>자주 쓰는 명령 & 슬래시 커맨드</a>
+      <a href="session-03.html"><span class="num">03</span>스킬(Skills) 만들고 쓰기</a>
+      <a href="session-04.html"><span class="num">04</span>서브에이전트 & 멀티 에이전트</a>
+      <a href="session-05.html"><span class="num">05</span>커스터마이징: 규칙·훅·MCP</a>
+      <a href="session-06.html"><span class="num">06</span>실전 시나리오 E2E</a>
+      <a href="session-07.html"><span class="num">07</span>안전하게 운영하기 (가드레일)</a>
+  </nav>
+  <div class="nav-group-title">해설 스크립트</div>
+  <nav>
+      <a href="script-01.html" class="active"><span class="num">01</span>세션 1 해설</a>
+      <a href="script-02.html"><span class="num">02</span>세션 2 해설</a>
+      <a href="script-03.html"><span class="num">03</span>세션 3 해설</a>
+      <a href="script-04.html"><span class="num">04</span>세션 4 해설</a>
+      <a href="script-05.html"><span class="num">05</span>세션 5 해설</a>
+      <a href="script-06.html"><span class="num">06</span>세션 6 해설</a>
+      <a href="script-07.html"><span class="num">07</span>세션 7 해설</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../basics/site/index.html">🎓 입문 과정</a>
+      <a href="../../advanced/site/index.html">🚀 심화 과정</a>
+  </nav>
+</aside>
+<main class="content md" id="content"></main>
+</div>
+<script type="text/markdown" id="md-src"># 세션 1 해설 스크립트 — 워크플로 손에 익히기
+
+> 🎙️ 이 문서는 강사가 그대로 읽거나 참고해 설명할 수 있는 해설 대본입니다. 본문: [세션 1 강의 자료](session-01.html)
+>
+> (기준 시점 2026-06 · 명령·UI는 바뀔 수 있으니 원리를 중심으로 전달)
+
+## [프레이밍 · 8분] 에이전트는 한 번에 안 끝난다
+
+🎙️ 코딩 에이전트 실전 트랙, 첫 시간이에요. 명령이니 스킬이니 멀티 에이전트니 화려한 걸 빨리 보고 싶으시겠지만, 오늘은 일부러 가장 기본을 잡을 거예요. 왜냐하면 이게 안 잡히면 나머지가 다 흔들리거든요.
+
+핵심 메시지 하나로 시작할게요 — **코딩 에이전트는 한 줄 던지고 끝나는 도구가 아니에요.** 입문 레슨 06에서 에이전트는 도구를 반복 호출하는 루프라고 배웠죠? 그런데 여러분이 에이전트를 *쓰는 방식*도 똑같이 루프여야 해요. 작은 사이클을 여러 번 도는 거예요. 오늘은 그 리듬, 탐색 → 계획 → 실행 → 검증을 손에 익힙니다.
+
+쉽게 비유하면, 요리를 시킬 때 "알아서 한 상 차려와"가 아니라, 재료 확인하고(탐색), 메뉴 정하고(계획), 만들고(실행), 간 보는(검증) 거예요. 간 안 보고 손님상에 내면 사고 나죠.
+
+## [핵심① · 22분] 탐색 → 계획 → 실행 → 검증 루프
+
+🎙️ 화면의 흐름도를 같이 볼게요. 탐색에서 코드와 맥락을 파악하고, 계획에서 무엇을 어떻게 할지 정하고, 실행에서 코드를 쓰고, 검증에서 테스트·타입·실제 실행으로 확인해요. 그리고 검증이 실패하거나 부족하면 다시 계획으로 돌아가고, 통과하면 완료예요. 단순하죠? 그런데 대부분 이 중 한두 단계를 건너뛰어서 고생해요.
+
+화면 표의 흔한 실수를 보세요. 탐색 없이 바로 코드 시키면 에이전트가 엉뚱한 가정을 해요. 계획 없이 큰 작업을 한 번에 시키면 길을 잃고요. 실행이 계획에서 벗어나도 방치하면 산으로 가요. 검증을 안 하면 "됐다는데 안 돌아가는" 상황을 못 잡아요.
+
+🎙️ 여기서 제일 강조하고 싶은 건 **탐색**이에요. 에이전트가 헤매는 대부분의 이유는 머리가 나빠서가 아니라 맥락이 없어서예요. "이 기능 고쳐줘" 하기 전에 "관련 파일부터 찾아서 어떻게 동작하는지 설명해줘"를 한 번 끼우면 결과가 확 달라져요. 입문 레슨 08에서 배운 코드베이스 탐색이 바로 이 첫 단계예요. 사람으로 치면, 남의 집에 고치러 갔는데 도면도 안 보고 벽부터 뚫는 거랑, 먼저 도면 보고 시작하는 거의 차이예요.
+
+💬 예상 질문: "탐색까지 시키면 느리지 않아요?" → 오히려 빨라요. 탐색 30초가 엉뚱한 방향으로 5분 헤매는 걸 막아줘요. 느린 건 헛작업이지 탐색이 아니에요.
+
+## [핵심② · 20분] 플랜 모드 — 실행 전에 계획을 받기
+
+🎙️ 두 번째예요. 큰 작업일수록 바로 코드를 만들게 두지 말고, **계획을 먼저 받아서 검토**해요. 요즘 코딩 에이전트는 대부분 "계획만 세우고 멈추는" 모드를 줘요. Claude Code의 플랜 모드가 그거예요.
+
+화면 흐름처럼, 작업을 설명하면서 "먼저 계획만 세워줘"라고 하거나 플랜 모드로 들어가면, 에이전트가 어떤 파일을 어떤 순서로 어떻게 바꿀지 제시해요. 그걸 내가 검토해서 고치라고 하거나 승인하고, 승인한 다음에야 실제 편집이 시작돼요.
+
+🎙️ 왜 이게 중요하냐면, **잘못된 방향은 코드가 만들어지기 전에 잡는 게 제일 싸거든요.** 100줄 짜놓고 "그게 아니라"라고 하면 그 100줄이 다 낭비예요. 계획 단계에서 한 줄 고치는 게 훨씬 싸죠. 그래서 비가역적이거나 큰 작업일수록 플랜 모드를 기본값으로 두세요. 집 공사로 치면, 벽 다 허물고 나서 "어 여기가 아니네"가 아니라 설계도에서 빨간 펜으로 고치는 거예요.
+
+## [핵심③ · 18분] 컨텍스트 운용 — /clear vs /compact
+
+🎙️ 세 번째, 컨텍스트 관리예요. 대화가 길어지면 컨텍스트가 오염되거나 가득 차요. 입문 레슨 04랑 07에서 다룬 그 컨텍스트요. 두 가지 손잡이를 구분해서 써야 해요.
+
+화면 표를 보세요. 첫째 `/clear`, 또는 새 대화. 이건 작업이 **바뀔 때** 써요. 다른 기능이나 다른 버그로 넘어갈 때요. 맥락을 완전히 비워서 이전 작업 잔상이 새 작업을 오염시키지 않게 하는 거예요. 둘째 `/compact`. 이건 같은 작업을 **계속**하는데 길어져서 한도에 가까워질 때요. 오래된 대화를 요약으로 압축하고 최근 맥락은 살려요. 셋째, 짧고 한 가지 작업이면 그냥 진행하세요. 괜히 개입할 필요 없어요.
+
+🎙️ 여기서 조심할 게 하나 있어요. 앞 작업의 결정이나 파일이 컨텍스트에 남아 있으면, 새 작업에서 엉뚱한 파일을 건드리거나 옛날 가정을 끌고 와요. 이게 조용히 일어나서 더 위험해요. 그러니 "이제 다른 일 할게" 싶으면 미련 없이 `/clear` 하세요. 컨텍스트는 길수록 좋은 게 절대 아니에요. 책상 위에 지난 일 서류가 쌓여 있으면 새 일에 헷갈리는 거랑 같아요.
+
+💬 예상 질문: "그냥 계속 한 대화에서 다 하면 편하지 않아요?" → 편하지만 위험해요. 작업이 바뀌면 잔상이 silent 오류를 만들어요. 작업 단위로 대화를 끊는 습관이 길게 보면 훨씬 빨라요.
+
+## [핵심④ · 12분] 스코프 관리 + 복붙 프롬프트 패턴
+
+🎙️ 네 번째예요. 큰 덩어리를 통째로 시키면 에이전트가 중간에 길을 잃고 여러 곳을 어설프게 건드려요. 입문 레슨 09의 "계획 우선"과 같은 교훈이에요.
+
+화면 예시를 보세요. "로그인, 회원가입, 비번 찾기, 프로필 편집 다 만들어줘" — 이러면 절반만 되고, 공유 파일 충돌 나고, 검증이 안 돼요. 대신 "① 로그인부터. 관련 파일 찾아서 계획하고 구현하고 테스트" 하고, 통과하면 "② 다음 회원가입" 이렇게 가야 해요. 핵심은 **검증 가능한 가장 작은 단위로 쪼개는** 거예요. 한 사이클 끝에 "이게 됐다"를 확인할 수 있어야 다음으로 넘어가죠. 멀티 기능, 멀티 파일을 본격적으로 다루는 건 세션 4 멀티 에이전트에서예요.
+
+🎙️ 마지막으로 프롬프트 패턴이에요. 막연한 지시는 탐색 시간을 낭비시키고 엉뚱한 결과를 불러요. 화면의 골격을 보세요 — 맥락 한 줄, 위치(파일 경로), 요구(기대 출력, 필드명까지), 참조(기존 패턴), 검증(뭘로 됐다고 판단하나). 
+
+화면의 막연 대 구체 예시가 핵심이에요. "검색 기능 추가해줘"는 약해요. 반면 "상품 검색 추가 — 위치는 이 파일, GET /products/search가 products와 total을 반환, 기존 목록 라우트와 같은 에러 처리, q='shoe'로 검증" 이건 강하죠. 
+
+🎙️ 꼭 기억하세요 — **에이전트는 이전 대화 맥락을 모른다고 가정하세요.** 특히 새 대화나 서브에이전트는 백지 상태예요. "아까 그거"는 안 통해요. 경로랑 현재 상태를 적어주는 30초가 5분 헛탐색을 막아요. 이건 사실 세션 4에서 멀티 에이전트한테 일을 시킬 때 결정적으로 중요해져요.
+
+💬 예상 질문: "매번 이렇게 길게 써야 하나요?" → 작고 명확한 작업은 짧아도 돼요. 다만 결과가 자꾸 어긋나면 십중팔구 경로·기대 출력·참조 중 하나가 빠진 거예요. 그때 보강하면 돼요.
+
+## [실습·정리 · 10분] 같은 작업, 두 방식 비교
+
+🎙️ 마무리 실습이에요. 작은 기능 하나를 두 가지로 시켜보세요. 한 번은 그냥 "이거 만들어줘" 한 줄로, 한 번은 오늘 배운 루프로 — 탐색시키고, 계획 받아 검토하고, 구현하고, 검증까지. 결과 차이를 직접 느껴보시는 게 오늘의 핵심이에요.
+
+한 문장으로 정리할게요 — **코딩 에이전트를 잘 쓴다는 건 한 줄 잘 던지는 게 아니라, 탐색에서 검증까지 작은 루프를 도는 거예요.** 탐색으로 맥락을 주고, 플랜 모드로 방향 잡고, clear와 compact로 컨텍스트 관리하고, 스코프를 쪼갠다. 이 리듬이 다음 세션들 — 명령, 스킬, 멀티 에이전트 — 의 토대예요.
+
+다음 시간엔 이 루프를 실제 명령으로 돌리는 법, 자주 쓰는 슬래시 커맨드랑 직접 만드는 커스텀 커맨드를 다룰게요. 수고하셨습니다. 질문 받을게요.</script>
+<script>window.XREF=[["세션 01", "session-01.html"], ["세션01", "session-01.html"], ["세션 1", "session-01.html"], ["세션1", "session-01.html"], ["세션 02", "session-02.html"], ["세션02", "session-02.html"], ["세션 2", "session-02.html"], ["세션2", "session-02.html"], ["세션 03", "session-03.html"], ["세션03", "session-03.html"], ["세션 3", "session-03.html"], ["세션3", "session-03.html"], ["세션 04", "session-04.html"], ["세션04", "session-04.html"], ["세션 4", "session-04.html"], ["세션4", "session-04.html"], ["세션 05", "session-05.html"], ["세션05", "session-05.html"], ["세션 5", "session-05.html"], ["세션5", "session-05.html"], ["세션 06", "session-06.html"], ["세션06", "session-06.html"], ["세션 6", "session-06.html"], ["세션6", "session-06.html"], ["세션 07", "session-07.html"], ["세션07", "session-07.html"], ["세션 7", "session-07.html"], ["세션7", "session-07.html"], ["레슨 00", "../../basics/site/lesson-00.html"], ["레슨00", "../../basics/site/lesson-00.html"], ["레슨 0", "../../basics/site/lesson-00.html"], ["레슨0", "../../basics/site/lesson-00.html"], ["레슨 01", "../../basics/site/lesson-01.html"], ["레슨01", "../../basics/site/lesson-01.html"], ["레슨 1", "../../basics/site/lesson-01.html"], ["레슨1", "../../basics/site/lesson-01.html"], ["레슨 02", "../../basics/site/lesson-02.html"], ["레슨02", "../../basics/site/lesson-02.html"], ["레슨 2", "../../basics/site/lesson-02.html"], ["레슨2", "../../basics/site/lesson-02.html"], ["레슨 03", "../../basics/site/lesson-03.html"], ["레슨03", "../../basics/site/lesson-03.html"], ["레슨 3", "../../basics/site/lesson-03.html"], ["레슨3", "../../basics/site/lesson-03.html"], ["레슨 04", "../../basics/site/lesson-04.html"], ["레슨04", "../../basics/site/lesson-04.html"], ["레슨 4", "../../basics/site/lesson-04.html"], ["레슨4", "../../basics/site/lesson-04.html"], ["레슨 05", "../../basics/site/lesson-05.html"], ["레슨05", "../../basics/site/lesson-05.html"], ["레슨 5", "../../basics/site/lesson-05.html"], ["레슨5", "../../basics/site/lesson-05.html"], ["레슨 06", "../../basics/site/lesson-06.html"], ["레슨06", "../../basics/site/lesson-06.html"], ["레슨 6", "../../basics/site/lesson-06.html"], ["레슨6", "../../basics/site/lesson-06.html"], ["레슨 07", "../../basics/site/lesson-07.html"], ["레슨07", "../../basics/site/lesson-07.html"], ["레슨 7", "../../basics/site/lesson-07.html"], ["레슨7", "../../basics/site/lesson-07.html"], ["레슨 08", "../../basics/site/lesson-08.html"], ["레슨08", "../../basics/site/lesson-08.html"], ["레슨 8", "../../basics/site/lesson-08.html"], ["레슨8", "../../basics/site/lesson-08.html"], ["레슨 09", "../../basics/site/lesson-09.html"], ["레슨09", "../../basics/site/lesson-09.html"], ["레슨 9", "../../basics/site/lesson-09.html"], ["레슨9", "../../basics/site/lesson-09.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"]];window.SLUG="script-01";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="app.js?v=a8d83b15"></script>
+</body>
+</html>

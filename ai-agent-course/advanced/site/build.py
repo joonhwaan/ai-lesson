@@ -54,6 +54,7 @@ SESSIONS = [
     ("session-07", "sessions/session-07-langgraph.md",  "LangGraph 상태 그래프",             "4주차 · 1회", "State/Node/Edge, 순환, Human-in-the-loop"),
     ("session-08", "sessions/session-08-multiagent.md", "멀티 에이전트 & 오케스트레이션",     "4주차 · 2회", "Supervisor/Swarm, 핸드오프, RAG 심화"),
     ("session-09", "sessions/session-09-eval-ops.md",   "평가·관찰가능성·프로덕션",           "5주차 · 1회", "eval, tracing, 가드레일, 캡스톤"),
+    ("session-10", "sessions/session-10-harness.md",   "하네스 & 컨텍스트 엔지니어링",        "5주차 · 2회", "모델 vs 하네스, 컨텍스트 조립·컴팩션·서브에이전트, 컨텍스트 엔지니어링·실패 모드"),
 ]
 
 DOCS = [
@@ -66,7 +67,7 @@ DOCS = [
 # 강사 해설 스크립트(구어체 강의 대본): (slug, 소스 md, 사이드바 제목)
 SCRIPTS = [
     (f"script-{i:02d}", f"scripts/session-{i:02d}-script.md", f"세션 {i} 해설 스크립트")
-    for i in range(1, 10)
+    for i in range(1, 11)
 ]
 
 # 데모 코드: (파일, 라벨, 브라우저 실행 가능 여부)
@@ -89,6 +90,7 @@ SHORT = {
     "session-07": "LangGraph",
     "session-08": "멀티에이전트",
     "session-09": "평가·운영",
+    "session-10": "하네스·컨텍스트",
 }
 
 # 세션별 관계: forward = 이 세션과 이어지는/참조하는 세션, back = 이 세션을 참조하는 세션
@@ -96,11 +98,11 @@ RELATIONS = {
     "session-01": {"forward": ["session-02"],
                    "back": ["session-02", "session-09"]},
     "session-02": {"forward": ["session-01", "session-03"],
-                   "back": ["session-06", "session-07", "session-09"]},
+                   "back": ["session-06", "session-07", "session-09", "session-10"]},
     "session-03": {"forward": ["session-02", "session-04"],
                    "back": ["session-04", "session-09"]},
     "session-04": {"forward": ["session-03", "session-05", "session-06", "session-07"],
-                   "back": ["session-05", "session-07", "session-08", "session-09"]},
+                   "back": ["session-05", "session-07", "session-08", "session-09", "session-10"]},
     "session-05": {"forward": ["session-04", "session-08", "session-09"],
                    "back": ["session-04", "session-08", "session-09"]},
     "session-06": {"forward": ["session-02", "session-07"],
@@ -108,9 +110,11 @@ RELATIONS = {
     "session-07": {"forward": ["session-02", "session-04", "session-06", "session-08"],
                    "back": ["session-08", "session-09"]},
     "session-08": {"forward": ["session-05", "session-06", "session-07", "session-09"],
-                   "back": ["session-09"]},
+                   "back": ["session-09", "session-10"]},
     "session-09": {"forward": ["session-01", "session-02", "session-03", "session-04",
                                "session-05", "session-06", "session-07", "session-08"],
+                   "back": ["session-10"]},
+    "session-10": {"forward": ["session-02", "session-04", "session-08", "session-09"],
                    "back": []},
 }
 
@@ -131,6 +135,8 @@ CONCEPTS = [
     ("Supervisor / Handoff",           ["session-08"],               "작업 분해·위임·제어권 이양"),
     ("평가·Trajectory / LLM-as-Judge", ["session-09"],               "결과+경로 평가·관찰가능성"),
     ("가드레일 / Prompt Injection",    ["session-02", "session-09"], "외부 데이터=신뢰 불가, 안전장치"),
+    ("하네스 (에이전트 스캐폴드)",      ["session-10"],               "모델을 감싸 에이전트로 만드는 바깥 껍데기"),
+    ("컨텍스트 엔지니어링 / 컴팩션",    ["session-04", "session-10"], "토큰 예산·압축·검색 주입·실패 모드 관리"),
 ]
 
 
@@ -204,7 +210,7 @@ def parse_glossary():
                  if f not in SKIP_FORMS and len(f) >= 3]
         if not forms:
             continue
-        snums = sorted(set(int(x) for x in re.findall(r"S(\d)", line)))
+        snums = sorted(set(int(x) for x in re.findall(r"S(\d+)", line)))
         candidates = [f"session-{n:02d}" for n in snums]
         terms.append((forms, candidates))
     return terms
@@ -420,6 +426,7 @@ BASICS_MAP = {
     "session-07": ["12"],
     "session-08": ["06"],
     "session-09": ["02", "11", "12"],
+    "session-10": ["04", "12"],
 }
 BASICS_LESSON_NUMS = [f"{i:02d}" for i in range(14)]   # 역링크용
 
@@ -454,7 +461,7 @@ def sidebar(active_slug):
 
     rows = []
     rows.append('  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1>'
-                '<p>약 5주 · 총 9세션</p></a></div>')
+                '<p>약 5주 · 총 10세션</p></a></div>')
     rows.append('  <div class="nav-group-title">강의</div>')
     rows.append("  <nav>")
     for i, (slug, _src, title, _wk, _desc) in enumerate(SESSIONS, start=1):
@@ -480,6 +487,7 @@ def sidebar(active_slug):
     rows.append(link("../../index.html", "🏠 통합 포털", "_portal"))
     rows.append(link("../../graph.html", "🕸️ 지식 그래프", "_graph"))
     rows.append(link("../../basics/site/index.html", "🎓 입문 과정", "_basics"))
+    rows.append(link("../../practical/site/index.html", "🛠️ 실전 활용", "_practical"))
     rows.append("  </nav>")
     return '<aside class="sidebar">\n' + "\n".join(rows) + "\n</aside>"
 
@@ -552,7 +560,7 @@ def build_map():
         for slug, *_ in SESSIONS
     )
     flow = "\n".join(
-        f'  SESSION0{i} --> SESSION0{i+1}' for i in range(1, 9)
+        f'  SESSION{i:02d} --> SESSION{i+1:02d}' for i in range(1, len(SESSIONS))
     )
     clicks = "\n".join(
         f'  click {slug.replace("-", "").upper()} "{slug}.html"' for slug, *_ in SESSIONS
@@ -569,7 +577,7 @@ def build_map():
     md = f"""# 🗺️ 관계 지도 — 세션은 어떻게 이어지는가
 
 이 과정은 **하나의 예제(리서치 어시스턴트)**가 raw 루프 → LangChain → LangGraph로
-진화하며 8개 세션을 관통한다. 아래 지도로 세션 간 연결과 핵심 개념의 위치를 한눈에 볼 수 있다.
+진화하며 10개 세션을 관통한다. 아래 지도로 세션 간 연결과 핵심 개념의 위치를 한눈에 볼 수 있다.
 (다이어그램의 각 노드, 표의 `S#` 링크를 클릭하면 해당 세션으로 이동한다. 본문 곳곳의
 `세션 0N`·`S#` 표기도 자동으로 링크가 걸려 있다.)
 
@@ -579,17 +587,17 @@ def build_map():
 graph LR
 {nodes}
 {flow}
-  SESSION02 -. 같은 예제 진화 .-> SESSION05
-  SESSION05 -. 진화 .-> SESSION06
-  SESSION06 -. state 관리 .-> SESSION04
-  SESSION08 -. 종합 정리 .-> SESSION01
+  SESSION02 -. 같은 예제 진화 .-> SESSION06
+  SESSION06 -. 진화 .-> SESSION07
+  SESSION07 -. state 관리 .-> SESSION04
+  SESSION10 -. 종합 정리 .-> SESSION01
   classDef thread fill:#eef0fe,stroke:#4f46e5,stroke-width:2px;
-  class SESSION02,SESSION05,SESSION06 thread;
+  class SESSION02,SESSION06,SESSION07 thread;
 {clicks}
 ```
 
 > [!NOTE]
-> 실선 화살표 = 강의 진행 순서. 점선 = 같은 예제의 **진화**(세션 02→05→06)와 주요 **역참조**(평가 세션이 전체를 종합).
+> 실선 화살표 = 강의 진행 순서. 점선 = 같은 예제의 **진화**(세션 02→06→07)와 주요 **역참조**(마지막 하네스 세션이 전체를 종합).
 
 ## 핵심 개념 ↔ 세션 매트릭스
 
@@ -612,9 +620,12 @@ def build_portal():
         '  <a class="card" href="basics/site/index.html"><div class="week">입문 · 14레슨</div>'
         '<div class="title">🎓 AI 에이전트 입문</div>'
         '<div class="desc">AI가 어떻게·왜 동작하는지 + 코딩 에이전트 실전 활용. 개념·멘탈 모델 중심.</div></a>\n'
-        '  <a class="card" href="advanced/site/index.html"><div class="week">심화 · 9세션</div>'
+        '  <a class="card" href="advanced/site/index.html"><div class="week">심화 · 10세션</div>'
         '<div class="title">🚀 AI Agent 개발 (약 5주)</div>'
         '<div class="desc">raw API → LangChain → LangGraph로 에이전트를 직접 빌드. 하나의 예제로 관통.</div></a>\n'
+        '  <a class="card" href="practical/site/index.html"><div class="week">실전 · 7세션</div>'
+        '<div class="title">🛠️ 코딩 에이전트 실전 활용</div>'
+        '<div class="desc">자주 쓰는 명령·스킬·멀티 에이전트·커스터마이징. 오늘 바로 쓰는 실전 워크플로.</div></a>\n'
         '  <a class="card" href="graph.html"><div class="week">시각화</div>'
         '<div class="title">🕸️ 지식 그래프</div>'
         '<div class="desc">세션·레슨·용어가 어떻게 연결되는지 옵시디언식 그래프로 탐색.</div></a>\n'
@@ -665,7 +676,7 @@ graph LR
 """
     md = md.replace("</script", "<\\/script")
     portal_xref = []
-    for i in range(1, 10):
+    for i in range(1, 11):
         href = f"advanced/site/session-{i:02d}.html"
         for txt in (f"세션 {i:02d}", f"세션 {i}", f"세션{i:02d}", f"세션{i}"):
             portal_xref.append([txt, href])
@@ -732,10 +743,12 @@ GRAPH_PAGE = r"""<!DOCTYPE html>
 <div class="gtoolbar">
   <a class="gback" href="index.html">← 포털</a>
   <strong>🕸️ 지식 그래프</strong>
-  <span class="glegend"><span><i style="background:#4f46e5"></i>세션</span>
+  <span class="glegend"><span><i style="background:#4f46e5"></i>심화 세션</span>
     <span><i style="background:#16a34a"></i>입문 레슨</span>
+    <span><i style="background:#ea580c"></i>실전 세션</span>
     <span><i style="background:#7c3aed"></i>용어</span></span>
   <label><input type="checkbox" data-toggle="lesson" checked> 입문 레슨</label>
+  <label><input type="checkbox" data-toggle="practical" checked> 실전 세션</label>
   <label><input type="checkbox" data-toggle="term" checked> 용어</label>
   <span class="ghint">노드 클릭=이동 · 드래그=이동 · 휠=확대/축소 · 호버=이웃 강조</span>
 </div>
@@ -743,7 +756,7 @@ GRAPH_PAGE = r"""<!DOCTYPE html>
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
 const GRAPH = __DATA__;
-const COLORS = { session: "#4f46e5", lesson: "#16a34a", term: "#7c3aed" };
+const COLORS = { session: "#4f46e5", lesson: "#16a34a", practical: "#ea580c", term: "#7c3aed" };
 const tb = () => document.querySelector(".gtoolbar").offsetHeight;
 const W = () => window.innerWidth, H = () => window.innerHeight - tb();
 
@@ -757,7 +770,7 @@ nodes.forEach(n => n.r = 6 + Math.min(15, (deg[n.id] || 0) * 1.6));
 const adj = {}; nodes.forEach(n => adj[n.id] = new Set([n.id]));
 RAW.forEach(l => { adj[l.source].add(l.target); adj[l.target].add(l.source); });
 
-const active = { session: true, lesson: true, term: true };
+const active = { session: true, lesson: true, practical: true, term: true };
 let link, node, label, sim;
 
 function build() {
@@ -768,7 +781,7 @@ function build() {
   g.selectAll("*").remove();
   link = g.append("g").attr("stroke", "#c3cad8").attr("stroke-opacity", 0.55)
     .selectAll("line").data(ls).join("line")
-    .attr("stroke-width", d => (d.kind === "path" || d.kind === "lpath") ? 2.2 : 1);
+    .attr("stroke-width", d => (d.kind === "path" || d.kind === "lpath" || d.kind === "ppath") ? 2.2 : 1);
   node = g.append("g").selectAll("circle").data(ns).join("circle")
     .attr("r", d => d.r).attr("fill", d => COLORS[d.type])
     .attr("stroke", "#fff").attr("stroke-width", 1.5).style("cursor", "pointer")
@@ -824,14 +837,36 @@ build();
 """
 
 
+# ---- 실전(practical) 트랙 — 지식 그래프 편입용 메타 (자체 빌더는 practical/site/build.py) ----
+PRACTICAL = [
+    ("01", "워크플로"),
+    ("02", "명령·슬래시"),
+    ("03", "스킬"),
+    ("04", "서브·멀티에이전트"),
+    ("05", "커스터마이징"),
+    ("06", "실전 E2E"),
+    ("07", "안전·가드레일"),
+]
+# 실전 세션 ↔ (심화 세션 슬러그 / 입문 레슨 번호) 연결 — 그래프 브리지
+PRACTICAL_BRIDGE = {
+    "01": {"sessions": ["session-10"], "lessons": ["07", "08"]},
+    "02": {"sessions": [],             "lessons": ["12"]},
+    "03": {"sessions": [],             "lessons": ["12"]},
+    "04": {"sessions": ["session-08", "session-10"], "lessons": ["08"]},
+    "05": {"sessions": ["session-09"], "lessons": ["12"]},
+    "06": {"sessions": ["session-09"], "lessons": ["09", "13"]},
+    "07": {"sessions": ["session-09", "session-10"], "lessons": ["12"]},
+}
+
+
 def build_graph():
-    """옵시디언 그래프 뷰 같은 force-directed 지식 그래프 (입문+심화+용어 통합)."""
+    """옵시디언 그래프 뷰 같은 force-directed 지식 그래프 (입문+심화+실전+용어 통합)."""
     nodes, links = [], []
     # 세션 노드 + 학습 경로/참조 엣지
     for i, (slug, _src, _t, _wk, _desc) in enumerate(SESSIONS, 1):
         nodes.append({"id": slug, "label": f"S{i} {SHORT[slug]}",
                       "type": "session", "href": f"advanced/site/{slug}.html"})
-    for i in range(1, 9):
+    for i in range(1, 10):
         links.append({"source": f"session-{i:02d}", "target": f"session-{i+1:02d}", "kind": "path"})
     for slug, rel in RELATIONS.items():
         for t in rel.get("forward", []):
@@ -846,6 +881,17 @@ def build_graph():
     for slug, lnums in BASICS_MAP.items():
         for num in lnums:
             links.append({"source": f"lesson-{num}", "target": slug, "kind": "bridge"})
+    # 실전(practical) 트랙 노드 + 순서 엣지 + 심화/입문 브리지
+    for num, short in PRACTICAL:
+        nodes.append({"id": f"pr-{num}", "label": f"P{int(num)} {short}",
+                      "type": "practical", "href": f"practical/site/session-{num}.html"})
+    for i in range(1, len(PRACTICAL)):
+        links.append({"source": f"pr-{i:02d}", "target": f"pr-{i+1:02d}", "kind": "ppath"})
+    for num, bridge in PRACTICAL_BRIDGE.items():
+        for sslug in bridge.get("sessions", []):
+            links.append({"source": f"pr-{num}", "target": sslug, "kind": "bridge"})
+        for lnum in bridge.get("lessons", []):
+            links.append({"source": f"pr-{num}", "target": f"lesson-{lnum}", "kind": "bridge"})
     # 용어 노드 + 정의 세션 엣지
     term_href = {f.lower(): h for f, h in glossary_term_pairs()}
     for idx, (forms, candidates) in enumerate(parse_glossary()):
@@ -913,7 +959,7 @@ def build_index():
       <div class="desc">브라우저에서 raw 에이전트 루프를 직접 실행하고 trace를 관찰</div></a>
     <a class="card" href="handout-one-pagers.html"><div class="week">자료</div>
       <div class="title">회차별 1페이지 요약</div>
-      <div class="desc">8개 세션 핵심 정리 + 자가 점검 질문</div></a>
+      <div class="desc">10개 세션 핵심 정리 + 자가 점검 질문</div></a>
     <a class="card" href="handout-discussion.html"><div class="week">자료</div>
       <div class="title">토론 질문 카드</div>
       <div class="desc">세션별 개방형 토론 + 강사용 촉진 포인트</div></a>
