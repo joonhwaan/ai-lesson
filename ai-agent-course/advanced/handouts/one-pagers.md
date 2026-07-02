@@ -1,6 +1,6 @@
 # AI 에이전트 개발 마스터 코스 — 원페이지 핸드아웃
 
-> 중급-고급 개발자 대상 · 개념 중심 8세션(4주 x 2)
+> 중급-고급 개발자 대상 · 개념 중심 10세션(약 5주)
 > 공통 토이 예제: **리서치 어시스턴트(Research Assistant)** — 사용자 질문을 받아 필요시 `web_search`/`calculator` 도구를 쓰고 요약해 답하는 단일 에이전트.
 > 표준 시나리오: "2024년 노벨 물리학상 수상자가 누구이고, 그 상금을 3으로 나누면 얼마야?"
 > 진화 매핑: 세션2 raw API 루프 → 세션6 LangChain → 세션7 LangGraph (같은 태스크의 진화)
@@ -320,3 +320,39 @@
 **추가 학습**
 - 문서: "LangSmith — Evaluation & Tracing" — https://docs.smith.langchain.com/
 - 문서/논문: "τ-bench: A Benchmark for Tool-Agent-User Interaction" — https://arxiv.org/abs/2406.12045
+
+---
+
+## 세션 10: 하네스 & 컨텍스트 엔지니어링
+
+**핵심 개념**
+- **하네스(harness)** = 모델을 받아 에이전트로 동작하게 만드는 모든 코드/스캐폴드 → ==모델이 아니라 하네스가 제품==
+- 하네스 다섯 구성요소: **루프 · 컨텍스트 어셈블러 · 도구 라우팅 · 서브에이전트 · 안전/관측 훅** (세션 2~9가 부품, 세션 10이 조립)
+- 컨텍스트 어셈블러: 모델은 stateless → **매 턴 프롬프트를 새로 조립**("기억"은 재조립이다)
+- **컨텍스트 엔지니어링** = 유한한 윈도우를 ==토큰 예산==으로 배분하는 문제 — 네 레버: **쓰기·선택·압축·격리**
+- **컴팩션**: 긴 대화를 요약으로 압축(손실 압축 → 핵심은 별도 state로 "쓰기"). 이 강의에서 본 그 동작
+- ==더 많이 ≠ 더 좋게==: 꽉 채우면 Lost in the Middle·비용·산만 → 목표는 채우기가 아니라 **덜어내기**
+- 컨텍스트 실패 4모드: 중독·산만·혼동·충돌 (인젝션 = 외부 데이터의 "중독")
+- 서브에이전트의 진짜 가치 = "여러 명"이 아니라 **컨텍스트 격리**
+
+**TL;DR**
+==에이전트는 "더 똑똑한 모델"이 아니라, 유한한 컨텍스트 예산 안에서 무엇을 넣고 뺄지 정하는 잘 설계된 하네스다.== [[chip:info: Harness]] [[chip:info: Context Engineering]]
+
+**핵심 용어**
+- Harness(하네스): 모델을 감싸 에이전트로 만드는 코드/스캐폴드
+- Context Engineering: 컨텍스트 윈도우에 무엇을 담고 뺄지 설계(네 레버)
+- Compaction(컴팩션): 오래된 이력을 요약으로 압축(손실 압축)
+- Token Budget(토큰 예산): 컨텍스트를 배분할 예산으로 보는 관점
+
+**자가 점검**
+1. 같은 모델 위에서 두 하네스의 품질이 갈리는 구체적 예를 들어 보라.
+2. 우리 리서치 어시스턴트에서 컨텍스트를 가장 많이 먹는 부품은? 네 레버 중 무엇을 먼저 적용할까?
+
+**✅ 할 수 있게 됨**
+- ✅ 하네스와 모델을 구분하고 "하네스가 제품"의 의미를 설명
+- ✅ 하네스 다섯 구성요소를 해부하고 컨텍스트 엔지니어링 네 레버를 적용
+- ✅ 컴팩션의 동작·손실 위험과 컨텍스트 실패 4모드를 진단
+
+**추가 학습**
+- 블로그: Anthropic, "Effective Context Engineering for AI Agents" — https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+- 블로그: "How Long Contexts Fail (Context Rot)" — https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html

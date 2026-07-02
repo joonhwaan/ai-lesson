@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세션 10 해설 스크립트 · AI Agent 강의</title>
+<link rel="stylesheet" href="style.css?v=a8d83b15">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>AI Agent 개발</h1><p>약 5주 · 총 10세션</p></a></div>
+  <div class="nav-group-title">강의</div>
+  <nav>
+      <a href="session-01.html"><span class="num">01</span>AI 에이전트 개요 & 패러다임</a>
+      <a href="session-02.html"><span class="num">02</span>Tool Use / Function Calling의 본질</a>
+      <a href="session-03.html"><span class="num">03</span>추론 & 계획 패턴</a>
+      <a href="session-04.html"><span class="num">04</span>메모리 & 컨텍스트 관리</a>
+      <a href="session-05.html"><span class="num">05</span>RAG 심화 · 검색 증강 생성</a>
+      <a href="session-06.html"><span class="num">06</span>LangChain 아키텍처</a>
+      <a href="session-07.html"><span class="num">07</span>LangGraph 상태 그래프</a>
+      <a href="session-08.html"><span class="num">08</span>멀티 에이전트 & 오케스트레이션</a>
+      <a href="session-09.html"><span class="num">09</span>평가·관찰가능성·프로덕션</a>
+      <a href="session-10.html"><span class="num">10</span>하네스 & 컨텍스트 엔지니어링</a>
+  </nav>
+  <div class="nav-group-title">해설 스크립트</div>
+  <nav>
+      <a href="script-01.html"><span class="num">01</span>세션 1 해설</a>
+      <a href="script-02.html"><span class="num">02</span>세션 2 해설</a>
+      <a href="script-03.html"><span class="num">03</span>세션 3 해설</a>
+      <a href="script-04.html"><span class="num">04</span>세션 4 해설</a>
+      <a href="script-05.html"><span class="num">05</span>세션 5 해설</a>
+      <a href="script-06.html"><span class="num">06</span>세션 6 해설</a>
+      <a href="script-07.html"><span class="num">07</span>세션 7 해설</a>
+      <a href="script-08.html"><span class="num">08</span>세션 8 해설</a>
+      <a href="script-09.html"><span class="num">09</span>세션 9 해설</a>
+      <a href="script-10.html" class="active"><span class="num">10</span>세션 10 해설</a>
+  </nav>
+  <div class="nav-group-title">실습</div>
+  <nav>
+      <a href="playground.html">Python 플레이그라운드</a>
+  </nav>
+  <div class="nav-group-title">자료</div>
+  <nav>
+      <a href="map.html">🗺️ 관계 지도</a>
+      <a href="spec.html">공통 데모 예제 명세</a>
+      <a href="handout-one-pagers.html">회차별 1페이지 요약</a>
+      <a href="handout-discussion.html">토론 질문 카드</a>
+      <a href="glossary.html">용어집(Glossary)</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../basics/site/index.html">🎓 입문 과정</a>
+      <a href="../../practical/site/index.html">🛠️ 실전 활용</a>
+  </nav>
+</aside>
+<main class="content md" id="content"></main>
+</div>
+<script type="text/markdown" id="md-src"># 세션 10 해설 스크립트 — 하네스 엔지니어링 · 컨텍스트 엔지니어링
+
+> 🎙️ 이 문서는 강사가 그대로 읽거나 참고해 설명할 수 있는 해설 대본입니다. 본문: [세션 10 강의 자료](session-10.html)
+
+## [복습 & 프레이밍 · 5분] 모델 vs 하네스
+
+🎙️ 자, 드디어 마지막 열 번째 시간이에요. 지난 아홉 번의 시간 동안 우리는 에이전트 "안"을 채워 왔어요. 추론, 기억, 검색, 도구, 평가까지요. 그런데 오늘은 카메라를 확 뒤로 빼서, 그 전부를 감싸 굴리는 바깥 껍데기를 볼 거예요. 이걸 **하네스(harness)**라고 불러요.
+
+왜 이게 중요하냐면요, 현장에서 진짜 이상한 일이 벌어지거든요. **똑같은 모델**을 쓰는데 누구의 에이전트는 잘 굴러가고, 누구의 것은 자꾸 헤매요. 차이가 어디서 날까요? 모델이 아니에요. 그 모델을 **감싼 코드**, 바로 하네스에서 갈려요.
+
+🎙️ 하네스를 한 문장으로 정의하면, 모델을 받아서 에이전트로 동작하게 만드는 모든 코드예요. 언제 모델을 부를지(루프), 무엇을 담아 부를지(컨텍스트 조립), 결과로 뭘 할지(도구 실행), 뭘 기억하고 잊을지(컴팩션), 뭘 막을지(안전 게이트)를 다 정하는 거죠. 쉽게 말하면 **모델은 한 번의 토큰 예측이고, 하네스는 그 호출을 언제·무엇을 담아·몇 번 부를지 정하는 바깥**이에요.
+
+사실 우리는 이미 하네스를 만든 적이 있어요. 세션 2에서 손으로 짠 그 `while` 루프, 그게 바로 **가장 작은 하네스**였어요. 오늘은 그걸 제품 수준으로 키우는 거예요.
+
+🎙️ 화면 다이어그램을 보세요. 가운데 모델 호출이 있고, 그 주위를 컨텍스트 어셈블러, 도구 라우터, 도구 실행이 빙 둘러싸고 있죠. 그리고 옆에 안전 게이트, 컴팩션, 관측 훅이 점선으로 붙어 있어요. 이 바깥 전체가 하네스예요. 오늘 핵심 한 줄로 머리에 박아두세요 — **모델이 아니라 하네스가 제품이다.** Claude Code도, Cursor도, 여러분이 만들 에이전트도 다 같은 모델 위에 올린 서로 다른 하네스예요. 모델은 사다 쓰는 부품이고, 경쟁력은 하네스에서 나와요.
+
+## [개념① · 23분] 하네스 해부 — 다섯 구성요소
+
+🎙️ 그럼 하네스를 다섯 조각으로 뜯어볼게요. 화면 표처럼 에이전트 루프, 컨텍스트 어셈블러, 도구 라우팅, 서브에이전트, 안전·관측 훅이에요. 재미있는 건 이게 다 우리가 이미 배운 거라는 점이에요. 루프는 세션 2, 어셈블러 재료는 세션 4와 5, 라우팅은 세션 2와 6, 서브에이전트는 세션 8, 안전·관측은 세션 9. 오늘은 이걸 하나로 조립하는 거예요.
+
+🎙️ 첫째, **에이전트 루프**예요. 세션 2 그 루프가 그대로 골격이에요. 다만 제품 하네스는 거기에 MAX_TURNS 상한, 정지 조건, 실패 재시도, 타임아웃을 둘러요. 루프 자체는 단순해요. 진짜 중요한 건 그 루프가 **매 회 무엇을 들고 도느냐**예요. 그게 나머지 네 조각이죠.
+
+🎙️ 둘째가 제일 과소평가되는 부품, **컨텍스트 어셈블러**예요. 여기 꼭 기억할 사실이 있어요 — 모델은 상태가 없어요, stateless. 그래서 하네스는 **매 호출마다 프롬프트를 처음부터 다시 조립**해요. 화면 박스를 보세요. 시스템 프롬프트는 거의 고정이고, 도구 스키마는 이번 턴에 쓸 것만 동적으로 고르고, 검색 결과는 retriever로 주입하고, 대화 이력은 필요하면 컴팩션해서 넣고, 마지막에 현재 입력과 직전 도구 결과를 붙여요. 이게 매 턴 새로 지어지는 거예요.
+
+여기서 세션 4의 그 말이 구체화돼요 — "메모리는 컨텍스트 재주입의 엔지니어링"이라고 했죠. 에이전트가 뭔가를 "기억"하는 것처럼 보이는 이유는, 어셈블러가 **매 턴 적절한 조각을 골라 다시 끼워 넣기** 때문이에요. 쉽게 말하면, 기억하는 게 아니라 매번 책상 위에 필요한 서류를 다시 깔아주는 거예요.
+
+🎙️ 셋째, **도구 라우팅**이에요. 도구는 많이 줄수록 좋은 게 아니에요. 도구 스키마는 그 자체가 컨텍스트 비용이고, 비슷한 도구가 많으면 모델이 헷갈려요. 화면 표의 나쁨/좋음을 보세요. 30개를 항상 노출하지 말고 이번 단계에 필요한 대여섯 개만, `search`·`find`·`lookup` 셋 다 주지 말고 하나로 통합해서 설명을 명확히, 도구가 10KB raw 덤프를 뱉지 말고 요약해서 주입. 쉽게 말하면, 연장통에 망치 세 개 넣어두면 어느 걸 쓸지 헷갈리잖아요.
+
+🎙️ 넷째, **서브에이전트**예요. 세션 8의 Supervisor와 worker가 하네스 관점에서 다시 보여요. 서브에이전트의 진짜 가치는 "여러 명"이 아니라 **컨텍스트 격리**예요. 화면 그림처럼, "이 50개 파일에서 인증 로직 찾아줘"를 서브에이전트한테 시키면, 걔가 자기만의 깨끗한 윈도우에서 50개를 다 읽고 **결론 3줄만** 돌려줘요. 메인 하네스는 그 50개를 안 봐도 되는 거죠. 메인 컨텍스트를 더럽히지 않는 게 핵심이에요.
+
+🎙️ 다섯째, **안전 게이트와 관측 훅**이에요. 세션 9 전체가 이 자리에 꽂혀요. 권한 최소화랑 휴먼 게이트는 도구 라우터 앞단의 게이트로, tracing은 모델 호출을 감싸는 훅으로 하네스에 박혀요. 안전과 관측은 나중에 붙이는 기능이 아니라 **하네스의 배선** 그 자체예요.
+
+💬 예상 질문: "하네스는 LangChain이나 LangGraph 같은 프레임워크 얘기 아니에요?" → 아니에요. 프레임워크는 하네스를 **짜는 도구**이지 하네스 자체가 아니에요. 세션 2의 raw `while` 루프도 완전한 하네스였잖아요. 프레임워크 없이도 하네스는 존재하고, 핵심 결정인 "무엇을 컨텍스트에 넣나"는 프레임워크가 대신 정해주지 않아요.
+
+## [개념② · 24분] 컨텍스트 엔지니어링 — 예산·4레버·컴팩션
+
+🎙️ 자, 방금 어셈블러가 다루는 문제를 정면으로 보겠습니다. 이걸 **컨텍스트 엔지니어링**이라고 해요. 프롬프트 엔지니어링이 "한 문장을 어떻게 쓰나"였다면, 컨텍스트 엔지니어링은 "유한한 컨텍스트 윈도우에 **매 턴 무엇을 담고 무엇을 뺄까**"를 설계하는 일이에요. 프롬프트 엔지니어링의 다음 단계라고 보면 돼요.
+
+🎙️ 출발점은 이거예요. 세션 4의 컨텍스트 윈도우가 여기선 **예산**으로 바뀌어요. 윈도우는 유한하고, 토큰은 돈이자 지연이고, 게다가 — 이게 중요한데 — **꽉 채울수록 품질이 떨어져요**. 세션 4의 Lost in the Middle 기억나시죠? 그래서 컨텍스트는 "최대한 많이"가 아니라 **예산을 배분**하는 문제예요. 화면 KPI를 보면 모델 한도가 20만 토큰이라도 실효 권장은 한 4만 토큰, 넘어가면 품질도 비용도 나빠져요.
+
+🎙️ 그럼 예산을 어떻게 관리하느냐, 결국 **네 가지 레버**로 정리돼요. 화면 표를 같이 볼게요. 첫째 **쓰기(Write)** — 윈도우 밖에 저장해두고 필요할 때만 불러와요. 중간 메모를 scratchpad 파일로 빼두는 거죠. 둘째 **선택(Select)** — 지금 필요한 것만 골라 넣어요. retriever로 관련 청크 top-k만, 이게 세션 5 RAG였죠. 셋째 **압축(Compress)** — 요약으로 토큰을 줄여요. 긴 fetch 결과를 summarize해서 넣는 거예요. 넷째 **격리(Isolate)** — 별도 컨텍스트로 분리해요. 서브에이전트한테 위임하는 거죠.
+
+쉽게 비유하면 책상이 좁을 때예요. 안 쓰는 서류는 서랍에 넣고(쓰기), 지금 필요한 것만 꺼내고(선택), 두꺼운 보고서는 한 장 요약본으로 바꾸고(압축), 큰 작업은 옆 사람 책상에서 하게 하는(격리) 거예요. 그리고 이 네 개는 따로따로가 아니라 **같이** 써요.
+
+🎙️ 그중에 특히 **컴팩션**을 짚을게요. 대화가 윈도우 한도에 다가가면, 하네스가 오래된 이력을 요약으로 압축하고 최근 맥락만 원본으로 남겨요. 그런데 이거, 여러분이 방금 경험했을 수도 있어요. **이 강의 세션이 길어졌을 때 일어난 일이 바로 컴팩션**이에요. 앞부분 대화가 요약으로 접히고 최근 대화는 그대로 남죠. 화면의 전/후 박스가 딱 그거예요.
+
+🎙️ 그런데 여기 함정이 있어요. **컴팩션은 손실 압축**이에요. 요약은 수치나 인용, 미묘한 결정을 흘릴 수 있어요. 세션 4의 요약 메모리 위험과 똑같은 함정이죠. 그래서 대책은, 정말 중요한 사실은 요약에 맡기지 말고 **별도 state나 파일로 "쓰기" 레버**를 써서 따로 보존하는 거예요. 요약에 의존하지 않게요.
+
+🎙️ 그리고 오늘 가장 직관에 반하는 핵심 하나. 화면 IMPORTANT 박스 보세요 — **컨텍스트는 꽉 채우면 오히려 나빠져요.** 관련 없는 토큰이 많을수록 모델은 중간 정보를 놓치고, 비용과 지연은 오르고, 엉뚱한 단서에 끌려가요. 좋은 하네스는 "넣을 수 있는 만큼"이 아니라 "**필요한 최소**"를 넣어요. 그러니까 컨텍스트 엔지니어링의 목표는 채우기가 아니라 **덜어내기**예요. 이 한 줄이 오늘의 핵심이에요.
+
+💬 예상 질문: "컨텍스트 윈도우가 크면 그냥 다 넣으면 안 되나요?" → 안 돼요. 클수록 좋은 게 아니에요. 꽉 채우면 Lost in the Middle에, 비용에, 산만함까지 겹쳐서 오히려 나빠져요. 목표는 채우기가 아니라 덜어내기라는 걸 꼭 기억하세요.
+
+💬 예상 질문: "컨텍스트 엔지니어링이랑 RAG는 뭐가 달라요?" → RAG는 컨텍스트 엔지니어링의 **"선택" 레버 하나**예요. 외부 지식을 골라 주입하는 거죠. 컨텍스트 엔지니어링은 그보다 넓어서 압축·격리·예산 배분·실패 모드까지, 윈도우 전체를 경영하는 일이에요.
+
+## [개념③ · 12분] 컨텍스트 실패 모드
+
+🎙️ 컨텍스트가 잘못되면 어떻게 망가질까요? 딱 네 가지 방식으로 실패해요. 증상으로 진단하고, 방금 배운 레버로 고치는 거예요. 화면 표를 하나씩 볼게요.
+
+첫째 **중독(Poisoning)**. 잘못된 사실이나 환각이 컨텍스트에 한번 들어가면 계속 참조돼요. 증상은 초반 오류를 끝까지 우기는 거예요. 대응은 출처 검증, 의심스러운 내용 격리·제거, state 재설정이에요. 쉽게 말하면 첫 단추를 잘못 끼우면 끝까지 어긋나는 거죠.
+
+둘째 **산만(Distraction)**. 무관한 토큰이 너무 많아서 핵심을 놓쳐요. 증상은 이력이 길어질수록 답이 흐려지는 거예요. 대응은 압축과 선택으로 덜어내기, 컴팩션이죠.
+
+셋째 **혼동(Confusion)**. 비슷한 도구나 중복 정보 때문에 모델이 헷갈려요. 증상은 엉뚱한 도구 호출, 잘못된 인자예요. 대응은 도구 라우팅 정리, 유사 도구 통합이고요. 아까 망치 세 개 얘기가 이거예요.
+
+넷째 **충돌(Clash)**. 컨텍스트 안의 정보끼리 모순돼요. 증상은 앞뒤가 다른 답, 오락가락이에요. 대응은 모순 출처 제거, 최신성이나 권한 필터, 세션 5에서 배운 그 메타데이터 필터죠.
+
+🎙️ 그리고 중요한 연결 하나. 세션 9의 프롬프트 인젝션도 사실 컨텍스트 실패예요. **외부 데이터가 컨텍스트를 "중독"시키는** 특수 사례거든요. fetch한 페이지의 숨은 지시가 컨텍스트에 섞여 들어오는 거니까요. 그래서 "외부 데이터는 데이터로 격리한다"가 곧 컨텍스트 위생이에요.
+
+## [사례 · 10분] Claude Code를 하네스로 뜯어보기
+
+🎙️ 자, 여기서 재미있는 걸 하나 할게요. 여러분은 사실 아주 잘 만든 하네스를 이미 매일 쓰고 있어요. Claude Code요. 오늘 배운 다섯 구성요소랑 1:1로 매핑돼요.
+
+화면 표를 보세요. 에이전트 루프는 도구를 부르고 결과를 받아 다시 추론하는 메인 루프, 컨텍스트 어셈블러는 시스템 프롬프트에 `CLAUDE.md`에 열린 파일에 도구 결과를 매 턴 조립하는 부분, 도구 라우팅은 `Read`·`Edit`·`Bash`·`Grep` 같은 도구를 노출하고 결과를 추리는 것, 서브에이전트는 `Task`로 탐색을 위임하고 결론만 회수하는 것, 안전·관측 훅은 권한 모드랑 hooks랑 도구 호출 로깅이에요. 그리고 컴팩션, 대화가 길어지면 자동 요약하는 거 — 이건 여러분이 이 강의에서 직접 본 그 동작이고요.
+
+🎙️ 메타 교훈이 여기 있어요. 오늘 배운 모든 개념이 **여러분이 지금 이 글을 읽는 도구** 안에서 돌아가고 있어요. 좋은 에이전트 제품을 만들고 싶으면, 쓰면서 "어, 이건 어떤 레버지? 어떤 게이트지?" 하고 역설계해 보세요. 제일 좋은 교재가 손 안에 있는 거예요.
+
+## [데모 · 10분] 리서치 어시스턴트를 하네스로 재구성
+
+🎙️ 이제 세션 2부터 9까지 키운 우리 리서치 어시스턴트를, 이번엔 **하네스 골격**으로 다시 그려볼게요. 코드는 개념 수준이에요.
+
+화면 첫 코드, 컨텍스트 어셈블러예요. 예산을 4만 토큰으로 두고요. 시스템 프롬프트 넣고, 도구는 이번 단계에 필요한 것만 골라 넣고(선택), retriever로 관련 청크 top-k만 넣고(또 선택), 대화 이력이 예산 절반을 넘으면 컴팩션으로 압축하고, 직전 도구 결과를 붙인 다음, 마지막에 `trim_to`로 하드 상한을 걸어요 — 이건 절대 못 넘겨요. 네 레버가 한 함수에 다 들어가 있죠?
+
+🎙️ 두 번째 코드는 서브에이전트로 격리하는 거예요. 무거운 탐색을 서브에이전트한테 넘기면, 걔가 자기 윈도우에서 수십 페이지를 소화하고 메인엔 요약 세 줄만 돌려줘요. 메인 컨텍스트는 깨끗하게 유지되죠.
+
+🎙️ 결과를 보세요. 화면 KPI 카드예요. 평균 컨텍스트 토큰이 52K에서 31K로 40% 줄었어요, 선택이랑 압축을 적용해서요. judge 품질 점수는 4.0에서 4.3으로 올랐고요 — 산만함을 제거한 효과예요. 컨텍스트 충돌은 2건에서 0건으로, 최신성 필터로 없앴어요. 핵심은 이거예요 — **같은 모델, 같은 도구인데, 어셈블러랑 레버만 손봐도** 품질이 오르고 비용이 줄어요. 이게 "모델이 아니라 하네스가 제품"의 실증이에요.
+
+## [회고 & 피날레 · 6분] 전체 과정 종합 + 마무리
+
+🎙️ 자, 10주를 한 장으로 덮어볼게요. 화면의 여정을 보세요. 세션 1에서 에이전트가 뭔지 개념을 잡았고, 세션 2에서 가장 작은 하네스인 `while` 루프와 function calling을, 세션 3에서 루프가 어떻게 생각하는지를, 세션 4에서 어셈블러의 재료인 기억을, 세션 5에서 "선택" 레버인 RAG를, 세션 6에서 프레임워크 추상화를, 세션 7에서 루프의 상태 그래프화를, 세션 8에서 컨텍스트 격리를, 세션 9에서 안전·관측·평가를 했죠. 그리고 오늘 세션 10에서 그 전부를 감싸는 껍데기와 컨텍스트 엔지니어링까지 왔어요.
+
+다시 보면, 세션 1부터 9까지가 전부 **하네스의 부품**이었고, 세션 10이 그 부품들을 **하나의 껍데기로 조립**한 거예요. 무엇을 넣나는 S1~S5, 어떻게 구조화하나는 S6~S8, 어떻게 지키고 보나는 S9, 그리고 어떻게 감싸나가 오늘 S10이에요.
+
+🎙️ 마무리할게요. 10주 과정을 마칩니다. 마지막 한 문장으로 전체를 묶을게요 — **에이전트는 "더 똑똑한 모델"이 아니라, 잘 설계된 하네스다.** 추론·기억·검색·도구·평가라는 부품을, 유한한 컨텍스트 예산 안에서 무엇을 넣고 무엇을 뺄지 정하는 껍데기요. 모델은 앞으로도 계속 좋아질 거예요. 하지만 그 모델을 진짜 제품으로 만드는 일은 **언제나 여러분의 하네스 설계**에 달려 있어요. 이제 여러분의 하네스를 직접 지어 보세요. 10주 동안 정말 수고 많으셨습니다. 자, 마지막 Q&A 받겠습니다.
+</script>
+<script>window.XREF=[["세션 01", "session-01.html"], ["세션 1", "session-01.html"], ["세션01", "session-01.html"], ["세션1", "session-01.html"], ["S1", "session-01.html"], ["세션 02", "session-02.html"], ["세션 2", "session-02.html"], ["세션02", "session-02.html"], ["세션2", "session-02.html"], ["S2", "session-02.html"], ["세션 03", "session-03.html"], ["세션 3", "session-03.html"], ["세션03", "session-03.html"], ["세션3", "session-03.html"], ["S3", "session-03.html"], ["세션 04", "session-04.html"], ["세션 4", "session-04.html"], ["세션04", "session-04.html"], ["세션4", "session-04.html"], ["S4", "session-04.html"], ["세션 05", "session-05.html"], ["세션 5", "session-05.html"], ["세션05", "session-05.html"], ["세션5", "session-05.html"], ["S5", "session-05.html"], ["세션 06", "session-06.html"], ["세션 6", "session-06.html"], ["세션06", "session-06.html"], ["세션6", "session-06.html"], ["S6", "session-06.html"], ["세션 07", "session-07.html"], ["세션 7", "session-07.html"], ["세션07", "session-07.html"], ["세션7", "session-07.html"], ["S7", "session-07.html"], ["세션 08", "session-08.html"], ["세션 8", "session-08.html"], ["세션08", "session-08.html"], ["세션8", "session-08.html"], ["S8", "session-08.html"], ["세션 09", "session-09.html"], ["세션 9", "session-09.html"], ["세션09", "session-09.html"], ["세션9", "session-09.html"], ["S9", "session-09.html"], ["세션 10", "session-10.html"], ["세션 10", "session-10.html"], ["세션10", "session-10.html"], ["세션10", "session-10.html"], ["S10", "session-10.html"], ["AgentExecutor", "session-06.html#6-3-에이전트-조립-세션-02의-while-루프가-agentexecutor로"], ["Agentic Loop", "glossary.html"], ["Autonomy", "session-01.html#1-llm-호출-vs-에이전트-무엇이-다른가"], ["자율성", "session-01.html#1-llm-호출-vs-에이전트-무엇이-다른가"], ["Chain-of-Thought", "session-03.html#1-chain-of-thought-cot-추론의-외재화-개념-강의"], ["CoT", "session-03.html#1-chain-of-thought-cot-추론의-외재화-개념-강의"], ["Checkpointer", "session-07.html#6-3-체크포인트-checkpointer"], ["Chunking", "session-05.html#2-색인-파이프라인-청킹-chunking"], ["Compaction", "session-10.html#3-3-컴팩션-대화가-길어질-때"], ["컴팩션", "session-10.html#3-3-컴팩션-대화가-길어질-때"], ["Conditional Edge", "session-07.html#3-4-conditional-edge-분기"], ["Context Engineering", "session-10.html#session-10-하네스-엔지니어링-컨텍스트-엔지니어링"], ["컨텍스트 엔지니어링", "session-10.html#session-10-하네스-엔지니어링-컨텍스트-엔지니어링"], ["Context Failure", "session-10.html#4-컨텍스트-실패-모드"], ["컨텍스트 실패 모드", "session-10.html#4-컨텍스트-실패-모드"], ["Context Window", "session-04.html#1-컨텍스트-윈도우-제약과-비용-개념-강의"], ["컨텍스트 윈도우", "session-04.html#1-컨텍스트-윈도우-제약과-비용-개념-강의"], ["Embedding", "session-05.html#3-색인-파이프라인-임베딩-embedding"], ["임베딩", "session-05.html#3-색인-파이프라인-임베딩-embedding"], ["Grounding", "glossary.html"], ["Guardrail", "session-09.html#4-안전성-가드레일"], ["가드레일", "session-09.html#4-안전성-가드레일"], ["Handoff", "session-08.html#3-에이전트-간-통신-핸드오프-작업-분배"], ["핸드오프", "session-08.html#3-에이전트-간-통신-핸드오프-작업-분배"], ["Harness", "session-10.html#session-10-하네스-엔지니어링-컨텍스트-엔지니어링"], ["하네스", "session-10.html#session-10-하네스-엔지니어링-컨텍스트-엔지니어링"], ["Hierarchical", "session-08.html#2-3-hierarchical-계층형-패턴"], ["계층형", "session-08.html#2-3-hierarchical-계층형-패턴"], ["Human-in-the-loop", "session-07.html#6-4-human-in-the-loop-개입지점"], ["HITL", "session-07.html#6-4-human-in-the-loop-개입지점"], ["휴먼 게이트", "session-07.html#6-4-human-in-the-loop-개입지점"], ["휴먼 승인 게이트", "session-07.html#6-4-human-in-the-loop-개입지점"], ["Hybrid Search", "session-05.html#5-3-하이브리드-검색"], ["하이브리드 검색", "session-05.html#5-3-하이브리드-검색"], ["LCEL", "session-06.html#4-lcel과-runnable-인터페이스"], ["LLM-as-a-Judge", "glossary.html"], ["Lost in the Middle", "session-04.html#1-2-비용-지연의-구조"], ["MAX_TURNS", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["max_steps", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["recursion_limit", "session-02.html#5-1-정지-조건-언제-끝낼까"], ["MCP", "glossary.html"], ["Memory", "glossary.html"], ["Metadata Filtering", "session-05.html#5-4-메타데이터-필터링"], ["메타데이터 필터링", "session-05.html#5-4-메타데이터-필터링"], ["Swarm", "session-08.html#2-2-network-swarm-패턴"], ["Output Parser", "session-06.html#3-4-output-parsers-출력의-구조화"], ["Plan-and-Execute", "session-03.html#3-plan-and-execute-계획과-실행의-분리-개념-강의"], ["Prompt Injection", "session-09.html#4-1-프롬프트-인젝션"], ["프롬프트 인젝션", "session-09.html#4-1-프롬프트-인젝션"], ["RAG", "session-04.html#4-rag-개요-메모리로서의-검색증강-개념-강의"], ["ReAct", "session-01.html#4-1-react-reason-act"], ["Reducer", "session-07.html#3-1-state-그래프를-흐르는-단일-자료구조"], ["Reflection", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["Reflexion", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["자기비판", "session-03.html#4-reflection-reflexion-자기비판과-재시도-개념-강의"], ["Re-ranking", "session-05.html#5-2-재랭킹-re-ranking"], ["재랭킹", "session-05.html#5-2-재랭킹-re-ranking"], ["Runnable", "session-06.html#4-lcel과-runnable-인터페이스"], ["Scratchpad", "session-03.html#1-1-핵심-아이디어"], ["Self-Consistency", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["State Graph", "session-07.html#세션-07-langgraph-상태-그래프-기반-에이전트"], ["상태 그래프", "session-07.html#세션-07-langgraph-상태-그래프-기반-에이전트"], ["Stop Condition", "session-02.html#5-정지-조건-무한루프-방지-에러-처리"], ["정지 조건", "session-02.html#5-정지-조건-무한루프-방지-에러-처리"], ["Sub-agent", "session-10.html#2-4-서브에이전트-컨텍스트-격리를-위한-위임"], ["서브에이전트", "session-10.html#2-4-서브에이전트-컨텍스트-격리를-위한-위임"], ["Summarization Buffer", "session-04.html#3-2-요약-메모리-running-summary"], ["요약 메모리", "session-04.html#3-2-요약-메모리-running-summary"], ["Supervisor", "session-08.html#2-1-supervisor-감독자-패턴"], ["Orchestrator", "session-08.html#2-1-supervisor-감독자-패턴"], ["Token Budget", "session-10.html#3-컨텍스트-엔지니어링-토큰-예산-배분-문제"], ["토큰 예산", "session-10.html#3-컨텍스트-엔지니어링-토큰-예산-배분-문제"], ["Tool Result", "glossary.html"], ["Tool Schema", "session-02.html#2-도구-스키마-json-schema-설계"], ["도구 스키마", "session-02.html#2-도구-스키마-json-schema-설계"], ["ToolNode", "glossary.html"], ["Trajectory", "session-09.html#2-2-trajectory-궤적-단계별-평가"], ["Tracing", "session-09.html#session-08-평가-관찰가능성-프로덕션"], ["Observability", "session-09.html#session-08-평가-관찰가능성-프로덕션"], ["관찰가능성", "session-09.html#session-08-평가-관찰가능성-프로덕션"], ["Tree-of-Thoughts", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["ToT", "session-03.html#5-self-consistency-tree-of-thoughts-개념-강의"], ["Vector DB", "session-05.html#4-색인-파이프라인-벡터db와-ann"], ["벡터DB", "session-05.html#4-색인-파이프라인-벡터db와-ann"], ["Workflow", "session-01.html#3-workflow-vs-agent-스펙트럼-anthropic-building-effective-agents"], ["레슨 00", "../../basics/site/lesson-00.html"], ["레슨00", "../../basics/site/lesson-00.html"], ["레슨 0", "../../basics/site/lesson-00.html"], ["레슨0", "../../basics/site/lesson-00.html"], ["레슨 01", "../../basics/site/lesson-01.html"], ["레슨01", "../../basics/site/lesson-01.html"], ["레슨 1", "../../basics/site/lesson-01.html"], ["레슨1", "../../basics/site/lesson-01.html"], ["레슨 02", "../../basics/site/lesson-02.html"], ["레슨02", "../../basics/site/lesson-02.html"], ["레슨 2", "../../basics/site/lesson-02.html"], ["레슨2", "../../basics/site/lesson-02.html"], ["레슨 03", "../../basics/site/lesson-03.html"], ["레슨03", "../../basics/site/lesson-03.html"], ["레슨 3", "../../basics/site/lesson-03.html"], ["레슨3", "../../basics/site/lesson-03.html"], ["레슨 04", "../../basics/site/lesson-04.html"], ["레슨04", "../../basics/site/lesson-04.html"], ["레슨 4", "../../basics/site/lesson-04.html"], ["레슨4", "../../basics/site/lesson-04.html"], ["레슨 05", "../../basics/site/lesson-05.html"], ["레슨05", "../../basics/site/lesson-05.html"], ["레슨 5", "../../basics/site/lesson-05.html"], ["레슨5", "../../basics/site/lesson-05.html"], ["레슨 06", "../../basics/site/lesson-06.html"], ["레슨06", "../../basics/site/lesson-06.html"], ["레슨 6", "../../basics/site/lesson-06.html"], ["레슨6", "../../basics/site/lesson-06.html"], ["레슨 07", "../../basics/site/lesson-07.html"], ["레슨07", "../../basics/site/lesson-07.html"], ["레슨 7", "../../basics/site/lesson-07.html"], ["레슨7", "../../basics/site/lesson-07.html"], ["레슨 08", "../../basics/site/lesson-08.html"], ["레슨08", "../../basics/site/lesson-08.html"], ["레슨 8", "../../basics/site/lesson-08.html"], ["레슨8", "../../basics/site/lesson-08.html"], ["레슨 09", "../../basics/site/lesson-09.html"], ["레슨09", "../../basics/site/lesson-09.html"], ["레슨 9", "../../basics/site/lesson-09.html"], ["레슨9", "../../basics/site/lesson-09.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"]];window.XREF_LOCAL=[["Compaction", "#개념-24분-컨텍스트-엔지니어링-예산-4레버-컴팩션", "개념-24분-컨텍스트-엔지니어링-예산-4레버-컴팩션"], ["컴팩션", "#개념-24분-컨텍스트-엔지니어링-예산-4레버-컴팩션", "개념-24분-컨텍스트-엔지니어링-예산-4레버-컴팩션"], ["Context Engineering", "#세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링", "세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링"], ["컨텍스트 엔지니어링", "#세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링", "세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링"], ["Context Failure", "#개념-12분-컨텍스트-실패-모드", "개념-12분-컨텍스트-실패-모드"], ["컨텍스트 실패 모드", "#개념-12분-컨텍스트-실패-모드", "개념-12분-컨텍스트-실패-모드"], ["Harness", "#세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링", "세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링"], ["하네스", "#세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링", "세션-10-해설-스크립트-하네스-엔지니어링-컨텍스트-엔지니어링"]];window.SLUG="script-10";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="app.js?v=a8d83b15"></script>
+</body>
+</html>

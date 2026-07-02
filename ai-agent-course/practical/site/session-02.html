@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자주 쓰는 명령 & 슬래시 커맨드 · 코딩 에이전트 실전</title>
+<link rel="stylesheet" href="style.css?v=a8d83b15">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+<body>
+<button class="menu-toggle" aria-label="menu">☰</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><a href="index.html"><h1>코딩 에이전트 실전</h1><p>실전 활용 · 7세션</p></a></div>
+  <div class="nav-group-title">세션</div>
+  <nav>
+      <a href="session-01.html"><span class="num">01</span>워크플로 손에 익히기</a>
+      <a href="session-02.html" class="active"><span class="num">02</span>자주 쓰는 명령 & 슬래시 커맨드</a>
+      <a href="session-03.html"><span class="num">03</span>스킬(Skills) 만들고 쓰기</a>
+      <a href="session-04.html"><span class="num">04</span>서브에이전트 & 멀티 에이전트</a>
+      <a href="session-05.html"><span class="num">05</span>커스터마이징: 규칙·훅·MCP</a>
+      <a href="session-06.html"><span class="num">06</span>실전 시나리오 E2E</a>
+      <a href="session-07.html"><span class="num">07</span>안전하게 운영하기 (가드레일)</a>
+  </nav>
+  <div class="nav-group-title">해설 스크립트</div>
+  <nav>
+      <a href="script-01.html"><span class="num">01</span>세션 1 해설</a>
+      <a href="script-02.html"><span class="num">02</span>세션 2 해설</a>
+      <a href="script-03.html"><span class="num">03</span>세션 3 해설</a>
+      <a href="script-04.html"><span class="num">04</span>세션 4 해설</a>
+      <a href="script-05.html"><span class="num">05</span>세션 5 해설</a>
+      <a href="script-06.html"><span class="num">06</span>세션 6 해설</a>
+      <a href="script-07.html"><span class="num">07</span>세션 7 해설</a>
+  </nav>
+  <div class="nav-group-title">과정</div>
+  <nav>
+      <a href="../../index.html">🏠 통합 포털</a>
+      <a href="../../graph.html">🕸️ 지식 그래프</a>
+      <a href="../../basics/site/index.html">🎓 입문 과정</a>
+      <a href="../../advanced/site/index.html">🚀 심화 과정</a>
+  </nav>
+</aside>
+<main class="content md" id="content"></main>
+</div>
+<script type="text/markdown" id="md-src"># 세션 02 — 자주 쓰는 명령 & 슬래시 커맨드
+
+> 세션 1에서 익힌 **탐색→계획→실행→검증 루프**를, 이번엔 ==실제 명령==으로 빠르게 돌린다. 자주 쓰는 내장 명령을 상황별로 고르고, `!`·`@`로 셸과 파일을 끌어오고, 반복 작업을 **커스텀 슬래시 커맨드**로 한 방에 처리한다.
+>
+> [[chip:info: 기준 시점 2026-06]] 명령 이름·동작은 버전마다 바뀐다. 여기 나온 건 ==대표 예시==이고, 내 환경의 최신 목록은 항상 `/help`로 확인한다. 외우는 게 아니라 ==발견하는== 습관이 핵심.
+
+## 학습 목표
+
+- 상황(컨텍스트·코드작업·설정·세션)별로 **내장 명령**을 골라 쓸 수 있다
+- `!`(셸) · `@`(파일 참조) · 이미지 첨부 · `#`(메모리)로 입력을 풍부하게 한다
+- 반복 작업을 ==커스텀 슬래시 커맨드==로 만들어 재사용한다
+- 명령을 엮어 자주 쓰는 **레시피**(리뷰→수정→커밋 등)를 굴린다
+
+## 회차 타임라인 (총 90분)
+
+| 시간 | 구간 | 내용 |
+|------|------|------|
+| 0–8분 | 프레이밍 | 명령 = 워크플로의 단축키 |
+| 8–32분 | 핵심① | 자주 쓰는 내장 명령 지도 |
+| 32–52분 | 핵심② | 입력 affordance — `!` · `@` · 이미지 · `#` |
+| 52–74분 | 핵심③ | 커스텀 슬래시 커맨드 만들기 |
+| 74–84분 | 핵심④ | 자주 쓰는 명령 레시피 |
+| 84–90분 | 정리 | 나만의 명령 치트시트 만들기 |
+
+---
+
+## 1. 명령 = 워크플로의 단축키
+
+세션 1의 루프는 ==무엇을 하는지==였다. 명령은 그 루프를 ==빠르게 굴리는 손동작==이다. 같은 일을 말로 길게 풀어 부탁할 수도 있지만, 자주 하는 동작은 한 단어 명령이 빠르고 정확하다.
+
+> [!NOTE] 명령은 두 종류
+> ① **내장 슬래시 명령**(`/clear`, `/review` …) — 도구가 기본 제공. ② **커스텀 슬래시 커맨드** — 내가 만든 재사용 워크플로(§3). 여기에 `!`·`@` 같은 ==입력 보조==(§2)가 더해진다.
+
+---
+
+## 2. 자주 쓰는 내장 명령 지도
+
+전부 외울 필요 없다. ==용도별로 "이런 게 있다"==만 알고, 정확한 이름은 `/help`로 찾는다.
+
+| 용도 | 대표 명령 | 언제 |
+|------|-----------|------|
+| **컨텍스트 관리** | `/clear` · `/compact` · `/memory` | 작업 전환 시 리셋 / 길어지면 압축 / 프로젝트 규칙(`CLAUDE.md`) 편집 |
+| **코드 작업** | `/init` · `/review` | 새 레포에 `CLAUDE.md` 생성 / 변경분 코드 리뷰 |
+| **설정·진단** | `/config` · `/model` · `/permissions` · `/cost` · `/doctor` | 환경설정 / 모델 전환 / 권한 / 비용 확인 / 설치 점검 |
+| **확장** | `/agents` · `/mcp` · `/hooks` | 서브에이전트 / MCP 서버 / 훅 관리 (세션 4·5에서 깊이) |
+| **세션** | `/resume` · `/export` · `/help` | 이전 대화 재개 / 내보내기 / 명령 목록 |
+
+> [!TIP] `/clear` vs `/compact` (세션 1 복습)
+> ==작업이 바뀌면 `/clear`==(잔상 제거), ==같은 작업이 길어지면 `/compact`==(요약 압축). 가장 자주 쓰게 될 두 명령이다.
+
+> [!WARNING] 모르는 명령을 추측하지 말 것
+> "이런 명령 있겠지" 하고 찍지 말자. ==`/help`가 진실의 원천==이다. 버전마다 명령이 생기고 사라진다. (이 표도 2026-06 기준)
+
+---
+
+## 3. 입력 affordance — 슬래시 말고도 있다
+
+슬래시 명령 외에, 입력창에서 바로 쓰는 보조 기호들이 작업을 크게 줄여준다.
+
+| 기호 | 하는 일 | 예 |
+|------|---------|-----|
+| `!` | ==인라인 셸 실행== — 결과가 대화에 들어옴 | `!npm test` · `!git status` |
+| `@` | ==파일/디렉터리 참조== — 경로 자동완성 | `@src/routes/products.js 를 봐줘` |
+| 이미지 | 붙여넣기·드래그로 첨부 | 에러 스크린샷·디자인 시안 |
+| `#` | ==메모리에 추가== — `CLAUDE.md`에 규칙 기록 | `# 항상 인라인 스타일 대신 CSS 모듈 사용` |
+
+> [!TIP] `!`는 "내가 직접 실행해 보여주기"
+> 에이전트에게 "테스트 돌려봐"라고 시키는 것과, 내가 `!npm test`로 ==결과를 바로 컨텍스트에 넣는== 것은 다르다. 인터랙티브 로그인(`gcloud auth login` 등)처럼 에이전트가 못 하는 것도 `!`로 내가 실행해 출력만 공유할 수 있다.
+
+---
+
+## 4. 커스텀 슬래시 커맨드 만들기
+
+같은 지시를 매번 길게 타이핑한다면 → ==커맨드로 굳혀라==. 마크다운 파일 하나면 끝이다.
+
+```bash
+# 위치
+.claude/commands/<이름>.md      # 프로젝트(팀 공유, git에 커밋)
+~/.claude/commands/<이름>.md     # 개인(모든 프로젝트)
+
+# 호출:  /<이름> [인자]
+```
+
+```markdown
+<!-- .claude/commands/pr-check.md -->
+---
+description: 변경분을 리뷰하고 테스트까지 점검
+argument-hint: "[브랜치명(선택)]"
+---
+현재 변경분을 리뷰해줘. 다음을 점검:
+1. `!git diff --stat` 로 변경 범위 파악
+2. 버그·엣지케이스·빈 catch(silent fail) 여부
+3. 관련 테스트가 있으면 `!npm test` 로 통과 확인
+대상 브랜치: $ARGUMENTS
+```
+
+- **`$ARGUMENTS`**: 호출 시 넘긴 인자 전체. `$1`·`$2`로 위치 인자도 가능.
+- **frontmatter**: `description`(목록 표시), `argument-hint`, 필요 시 허용 도구 지정.
+- 본문에 `!`(셸)·`@`(파일)를 ==그대로 박아둘 수== 있어, 명령 한 번에 셸·파일 컨텍스트가 함께 실행된다.
+
+> [!NOTE] 좋은 커맨드의 기준
+> ==3번 이상 반복==했고 ==단계가 고정==된 작업이 후보다. 매번 달라지는 일을 억지로 커맨드화하면 오히려 방해. (이 경계는 세션 3 "스킬"에서 더 정교하게 다룬다 — 규칙 vs 스킬 vs 커맨드.)
+
+---
+
+## 5. 자주 쓰는 명령 레시피
+
+명령·affordance를 엮으면 세션 1의 루프가 손에 착 붙는다.
+
+```text
+[레시피 A — 변경분 마무리]
+1) !git diff           내가 바꾼 것 확인
+2) /review             에이전트 리뷰
+3) (수정 반영)
+4) !npm test           검증
+5) 커밋 요청
+
+[레시피 B — 새 레포 진입]
+1) /init               CLAUDE.md 생성(관례 파악)
+2) @<핵심 파일> 설명해줘   탐색(세션 1)
+3) 플랜 모드로 작업 시작
+
+[레시피 C — 작업 전환]
+/clear → 새 작업 프롬프트(경로·기대출력·참조 명시, 세션 1 §5)
+```
+
+> [!TIP] 나만의 치트시트
+> 오늘 배운 것 중 ==실제로 쓸 5개만== 골라 적어두자. 자주 쓰는 5개 + `/help`로 나머지 발견 — 이게 가장 빠른 숙달 경로다.
+
+---
+
+## 📚 실전 예제 모음
+
+§4·§5에서 본 골격을 ==그대로 복붙해 쓰는== 커맨드 4종과 레시피 2종이다. 용도가 다 다르니, 내 작업에 맞는 것부터 골라 `.claude/commands/`에 떨궈라.
+
+### 커맨드 ① `/pr-check` — 변경분 리뷰 + 테스트
+
+PR 올리기 직전, 내가 바꾼 것만 추려 리뷰받고 테스트까지 한 번에.
+
+```markdown
+<!-- .claude/commands/pr-check.md -->
+---
+description: 변경분을 리뷰하고 관련 테스트까지 점검
+argument-hint: "[비교 대상 브랜치(선택, 기본 main)]"
+---
+@CLAUDE.md 의 규칙을 기준으로 현재 변경분을 리뷰해줘.
+1. `!git diff $ARGUMENTS...HEAD --stat` 로 변경 범위 파악
+2. 버그·엣지케이스·빈 catch(silent fail)·하드코딩된 값 점검
+3. 관련 테스트가 있으면 `!npm test` 로 통과 확인, 없으면 빠진 케이스 제안
+비교 대상: $ARGUMENTS (없으면 main)
+```
+
+### 커맨드 ② `/changelog` — 커밋에서 변경로그 뽑기
+
+릴리스 노트 초안을, 마지막 태그 이후 커밋에서 자동으로.
+
+```markdown
+<!-- .claude/commands/changelog.md -->
+---
+description: 마지막 태그 이후 커밋으로 변경로그 초안 작성
+argument-hint: "[기준 태그(선택, 기본 최신 태그)]"
+---
+`!git log $ARGUMENTS..HEAD --oneline` 의 커밋을 읽고
+변경로그 초안을 만들어줘.
+- Added / Changed / Fixed / Removed 로 분류
+- 사용자 관점의 한 줄 설명 (커밋 메시지 그대로 베끼지 말 것)
+- 머지 커밋·버전 범프 같은 잡음은 제외
+```
+
+### 커맨드 ③ `/scaffold` — 보일러플레이트 생성
+
+새 모듈을 ==기존 패턴 그대로== 찍어내기. 빈 파일 4개를 매번 손으로 만들 일이 없어진다.
+
+```markdown
+<!-- .claude/commands/scaffold.md -->
+---
+description: 기존 패턴을 따라 새 모듈 보일러플레이트 생성
+argument-hint: "<모듈 이름>"
+---
+"$ARGUMENTS" 모듈을 새로 만들어줘.
+먼저 @src/modules/ 에서 가장 최근 모듈 하나를 골라 구조를 파악하고,
+그 패턴을 그대로 따라:
+- 라우트·서비스·테스트 파일을 동일한 네이밍으로 생성
+- import·export 형식, 에러 처리 방식까지 기존과 일치시킬 것
+아직 비즈니스 로직은 비우고 TODO 주석만 — 뼈대만 만든다.
+```
+
+### 커맨드 ④ `/explain` — 파일/함수 설명
+
+낯선 코드에 진입할 때(세션 1 탐색 단계), 핵심만 빠르게 브리핑받기.
+
+```markdown
+<!-- .claude/commands/explain.md -->
+---
+description: 지정한 파일이나 함수를 처음 보는 사람 눈높이로 설명
+argument-hint: "@<파일경로> 또는 함수명"
+---
+$ARGUMENTS 를 처음 읽는 사람에게 설명하듯 풀어줘.
+- 이 코드의 책임(한 줄) → 핵심 흐름 → 바깥과 주고받는 입출력
+- 눈에 띄는 의존성·부작용·주의할 엣지케이스
+- 길게 늘어놓지 말고 ==읽고 바로 손댈 수 있을 만큼==만
+```
+
+> [!TIP] 인자 힌트는 "쓰는 법"을 알려준다
+> `argument-hint`는 ==호출할 때 무엇을 넘기는지==를 입력창에 띄워준다. `/scaffold <모듈 이름>`처럼 적어두면, 한 달 뒤의 나도 인자 형식을 헷갈리지 않는다.
+
+### 레시피 — 명령을 엮어 흐름 만들기
+
+커맨드 하나로 안 끝나는 일은, 명령을 순서대로 엮는다.
+
+```text
+[레시피 D — 릴리스 직전 점검]
+1) /pr-check main      변경분 리뷰 + 테스트
+2) (지적사항 반영 후 재확인)
+3) /changelog          변경로그 초안
+4) !git tag -l         기존 태그 확인 후 다음 버전 결정
+5) 커밋·태그 요청
+
+[레시피 E — 의존성 감사]
+1) !npm outdated       오래된 패키지 목록을 컨텍스트에
+2) "위 중 메이저 점프만 위험도순으로 정리해줘"
+3) !npm audit          알려진 취약점 확인
+4) 우선순위 1개부터 → 플랜 모드로 업그레이드(세션 1)
+```
+
+> [!NOTE] 레시피는 아직 "손동작"이다
+> 위 흐름이 ==매번 똑같아지면== 그때 커맨드(또는 세션 3의 스킬)로 굳히면 된다. 처음부터 다 커맨드화하지 말고, 반복이 확인된 것부터.
+
+---
+
+## ✅ 한 문장 요약
+
+> [!TIP] 한 문장 요약
+> ==명령은 워크플로의 단축키다.== 내장 명령은 용도별로 알아두고 `/help`로 발견하며, `!`·`@`로 셸·파일을 끌어오고, 반복 작업은 커스텀 슬래시 커맨드로 굳혀 세션 1의 루프를 빠르게 굴린다.
+
+## 확인 문제
+
+**Q1.** 매번 "변경분 리뷰하고 테스트 돌려서 통과하면 알려줘"를 길게 타이핑하고 있다. 가장 적절한 해결은?
+
+> **정답:** 커스텀 슬래시 커맨드(`.claude/commands/`)로 만든다.
+> **해설:** 3번 이상 반복되고 단계가 고정된 작업의 전형적 후보다(§4). 팀과 공유하려면 프로젝트 경로에 두고 커밋한다.
+
+**Q2.** 에이전트에게 "테스트 돌려봐"라고 시키는 것과 `!npm test`를 직접 치는 것의 차이는?
+
+> **정답:** `!`는 내가 직접 실행해 ==결과를 곧장 컨텍스트에 넣는== 것.
+> **해설:** 인터랙티브 로그인처럼 에이전트가 못 하는 것도 `!`로 내가 실행해 출력만 공유할 수 있다(§3).
+
+**Q3.** 어떤 명령이 있는지 가물가물하다. 추측해서 쳐도 될까?
+
+> **정답:** 아니다. `/help`로 확인한다.
+> **해설:** 명령은 버전마다 바뀐다. 추측은 헛발질이다 — 발견이 정답(§2).
+
+---
+
+## 다음 세션 예고
+
+다음 세션(**세션 3 — 스킬(Skills) 만들고 쓰기**)에서는 커스텀 커맨드보다 한 단계 위 — ==특정 상황에서 자동으로 발동==되는 **스킬**을 만든다. "규칙(항상) vs 스킬(필요할 때) vs 커맨드(내가 호출)"의 경계를 또렷이 가른다.
+
+<div class="related-box">
+<div class="related-title">🎙️ 강의 해설 스크립트</div>
+<p>이 세션을 말로 풀어 설명하는 강사 대본(쉬운 풀이·비유·예상 질문):</p>
+<ul>
+<li><a href="script-02.html">세션 2 해설 스크립트</a></li>
+</ul>
+</div>
+</script>
+<script>window.XREF=[["세션 01", "session-01.html"], ["세션01", "session-01.html"], ["세션 1", "session-01.html"], ["세션1", "session-01.html"], ["세션 02", "session-02.html"], ["세션02", "session-02.html"], ["세션 2", "session-02.html"], ["세션2", "session-02.html"], ["세션 03", "session-03.html"], ["세션03", "session-03.html"], ["세션 3", "session-03.html"], ["세션3", "session-03.html"], ["세션 04", "session-04.html"], ["세션04", "session-04.html"], ["세션 4", "session-04.html"], ["세션4", "session-04.html"], ["세션 05", "session-05.html"], ["세션05", "session-05.html"], ["세션 5", "session-05.html"], ["세션5", "session-05.html"], ["세션 06", "session-06.html"], ["세션06", "session-06.html"], ["세션 6", "session-06.html"], ["세션6", "session-06.html"], ["세션 07", "session-07.html"], ["세션07", "session-07.html"], ["세션 7", "session-07.html"], ["세션7", "session-07.html"], ["레슨 00", "../../basics/site/lesson-00.html"], ["레슨00", "../../basics/site/lesson-00.html"], ["레슨 0", "../../basics/site/lesson-00.html"], ["레슨0", "../../basics/site/lesson-00.html"], ["레슨 01", "../../basics/site/lesson-01.html"], ["레슨01", "../../basics/site/lesson-01.html"], ["레슨 1", "../../basics/site/lesson-01.html"], ["레슨1", "../../basics/site/lesson-01.html"], ["레슨 02", "../../basics/site/lesson-02.html"], ["레슨02", "../../basics/site/lesson-02.html"], ["레슨 2", "../../basics/site/lesson-02.html"], ["레슨2", "../../basics/site/lesson-02.html"], ["레슨 03", "../../basics/site/lesson-03.html"], ["레슨03", "../../basics/site/lesson-03.html"], ["레슨 3", "../../basics/site/lesson-03.html"], ["레슨3", "../../basics/site/lesson-03.html"], ["레슨 04", "../../basics/site/lesson-04.html"], ["레슨04", "../../basics/site/lesson-04.html"], ["레슨 4", "../../basics/site/lesson-04.html"], ["레슨4", "../../basics/site/lesson-04.html"], ["레슨 05", "../../basics/site/lesson-05.html"], ["레슨05", "../../basics/site/lesson-05.html"], ["레슨 5", "../../basics/site/lesson-05.html"], ["레슨5", "../../basics/site/lesson-05.html"], ["레슨 06", "../../basics/site/lesson-06.html"], ["레슨06", "../../basics/site/lesson-06.html"], ["레슨 6", "../../basics/site/lesson-06.html"], ["레슨6", "../../basics/site/lesson-06.html"], ["레슨 07", "../../basics/site/lesson-07.html"], ["레슨07", "../../basics/site/lesson-07.html"], ["레슨 7", "../../basics/site/lesson-07.html"], ["레슨7", "../../basics/site/lesson-07.html"], ["레슨 08", "../../basics/site/lesson-08.html"], ["레슨08", "../../basics/site/lesson-08.html"], ["레슨 8", "../../basics/site/lesson-08.html"], ["레슨8", "../../basics/site/lesson-08.html"], ["레슨 09", "../../basics/site/lesson-09.html"], ["레슨09", "../../basics/site/lesson-09.html"], ["레슨 9", "../../basics/site/lesson-09.html"], ["레슨9", "../../basics/site/lesson-09.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 10", "../../basics/site/lesson-10.html"], ["레슨10", "../../basics/site/lesson-10.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 11", "../../basics/site/lesson-11.html"], ["레슨11", "../../basics/site/lesson-11.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 12", "../../basics/site/lesson-12.html"], ["레슨12", "../../basics/site/lesson-12.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"], ["레슨 13", "../../basics/site/lesson-13.html"], ["레슨13", "../../basics/site/lesson-13.html"]];window.SLUG="session-02";</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="app.js?v=a8d83b15"></script>
+</body>
+</html>

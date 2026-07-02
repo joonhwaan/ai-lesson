@@ -79,6 +79,7 @@ def sidebar(active_slug):
     rows.append(link("../../index.html", "🏠 통합 포털", "_portal"))
     rows.append(link("../../graph.html", "🕸️ 지식 그래프", "_graph"))
     rows.append(link("../../advanced/site/index.html", "🚀 심화 과정", "_deep"))
+    rows.append(link("../../practical/site/index.html", "🛠️ 실전 활용", "_practical"))
     rows.append("  </nav>")
     return '<aside class="sidebar">\n' + "\n".join(rows) + "\n</aside>"
 
