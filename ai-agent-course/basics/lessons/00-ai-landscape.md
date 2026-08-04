@@ -187,7 +187,7 @@ AI는 **규모 → 추론 → 에이전트**로 발전해 왔고, 지금은 Chat
 
 ## 🔗 다음 / 심화 연결
 - 다음 레슨: **01 · AI 모델은 어떻게 동작하나** — 방금 만난 LLM이 "다음 토큰 예측"으로 어떻게 말을 만드는지 들여다봅니다.
-- 8주 심화 과정에서는 이 코딩 에이전트들이 내부적으로 쓰는 **에이전트 루프**를 직접 구현합니다(세션 1·세션 2).
+- 10세션 심화 과정에서는 이 코딩 에이전트들이 내부적으로 쓰는 **에이전트 루프**를 직접 구현합니다(세션 1·세션 2).
 
 ## 참고 자료 (출처)
 - OpenAI — [o1](https://openai.com/index/introducing-openai-o1-preview/), [GPT-5](https://openai.com/index/introducing-gpt-5/), [GPT-5.5](https://openai.com/index/introducing-gpt-5-5/), [Codex](https://openai.com/codex/)

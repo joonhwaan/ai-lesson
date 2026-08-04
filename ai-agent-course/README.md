@@ -1,4 +1,4 @@
-# AI Agent 개발 강의 (4주 × 2회 = 총 8세션)
+# AI Agent 개발 강의 (5주 × 2회 = 총 10세션)
 
 중상급 개발자 대상 · 이론/개념 중심 · 세션당 1~1.5시간
 
@@ -22,8 +22,8 @@ ai-agent-course/
 ├─ index.html              ← 통합 포털 (입문+심화 진입점, 생성물)
 ├─ graph.html              ← 지식 그래프 (생성물)
 ├─ shared-assets/          ← 공통 디자인 시스템 단일 소스 (style.css, app.js, DESIGN.md)
-├─ advanced/               ← 심화 8주 과정
-│  ├─ sessions/            ← 세션별 상세 강의 자료(8개, 원본 md)
+├─ advanced/               ← 심화 5주 과정(10세션)
+│  ├─ sessions/            ← 세션별 상세 강의 자료(10개, 원본 md)
 │  ├─ shared/              ← 공유 기준 예제 명세 (demo-task-spec.md)
 │  ├─ demos/               ← 진화하는 데모 코드 (raw → langchain → langgraph)
 │  ├─ handouts/            ← 회차별 1페이지 요약 + 토론 질문 카드 + 용어집
@@ -45,10 +45,12 @@ ai-agent-course/
 | 1 | 2 | Tool Use / Function Calling의 본질 | [session-02](advanced/sessions/session-02-tool-use.md) |
 | 2 | 3 | 추론 & 계획 패턴 | [session-03](advanced/sessions/session-03-reasoning.md) |
 | 2 | 4 | 메모리 & 컨텍스트 관리 | [session-04](advanced/sessions/session-04-memory.md) |
-| 3 | 5 | LangChain 아키텍처 | [session-05](advanced/sessions/session-05-langchain.md) |
-| 3 | 6 | LangGraph 상태 그래프 | [session-06](advanced/sessions/session-06-langgraph.md) |
-| 4 | 7 | 멀티 에이전트 & 오케스트레이션 | [session-07](advanced/sessions/session-07-multiagent.md) |
-| 4 | 8 | 평가·관찰가능성·프로덕션 | [session-08](advanced/sessions/session-08-eval-ops.md) |
+| 3 | 5 | RAG 심화 · 검색 증강 생성 | [session-05](advanced/sessions/session-05-rag.md) |
+| 3 | 6 | LangChain 아키텍처 | [session-06](advanced/sessions/session-06-langchain.md) |
+| 4 | 7 | LangGraph 상태 그래프 | [session-07](advanced/sessions/session-07-langgraph.md) |
+| 4 | 8 | 멀티 에이전트 & 오케스트레이션 | [session-08](advanced/sessions/session-08-multiagent.md) |
+| 5 | 9 | 평가·관찰가능성·프로덕션 | [session-09](advanced/sessions/session-09-eval-ops.md) |
+| 5 | 10 | 하네스 & 컨텍스트 엔지니어링 | [session-10](advanced/sessions/session-10-harness.md) |
 
 ## 회차별 공통 포맷 (1~1.5시간)
 1. 복습 & 동기부여 (5분)
@@ -60,5 +62,5 @@ ai-agent-course/
 | 파일 | 세션 | 내용 |
 |------|------|------|
 | [advanced/demos/01_raw_agent_loop.py](advanced/demos/01_raw_agent_loop.py) | 2 | raw API + while 루프 에이전트 |
-| [advanced/demos/02_langchain_agent.py](advanced/demos/02_langchain_agent.py) | 5 | 동일 태스크를 LangChain으로 |
-| [advanced/demos/03_langgraph_agent.py](advanced/demos/03_langgraph_agent.py) | 6 | 동일 태스크를 LangGraph 상태 그래프로 |
+| [advanced/demos/02_langchain_agent.py](advanced/demos/02_langchain_agent.py) | 6 | 동일 태스크를 LangChain으로 |
+| [advanced/demos/03_langgraph_agent.py](advanced/demos/03_langgraph_agent.py) | 7 | 동일 태스크를 LangGraph 상태 그래프로 |
