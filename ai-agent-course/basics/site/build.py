@@ -52,7 +52,7 @@ LESSONS = [
     ("10", "lesson-10", "lessons/10-debugging.md",             "버그 발견 및 수정",        "디버깅 6원칙, 증거 우선, 런타임 증거, 여러 모델"),
     ("11", "lesson-11", "lessons/11-review-and-testing.md",    "코드 리뷰 및 테스트",      "자체/동료 리뷰, 자동 리뷰, 안전망, 테스트 위임, 피드백 루프"),
     ("12", "lesson-12", "lessons/12-customizing-agents.md",    "에이전트 맞춤 설정",       "Rules vs Skills, MCP, CLI 도구, 재사용 워크플로"),
-    ("13", "lesson-13", "lessons/13-capstone.md",              "전체 정리 & 다음 단계",    "할인코드 E2E 예제 + 12개 멘탈 모델 + 8주 심화 로드맵"),
+    ("13", "lesson-13", "lessons/13-capstone.md",              "전체 정리 & 다음 단계",    "할인코드 E2E 예제 + 12개 멘탈 모델 + 10세션 심화 로드맵"),
 ]
 
 
@@ -114,7 +114,7 @@ def xref_pairs():
         n = int(num)
         for txt in (f"레슨 {num}", f"레슨{num}", f"레슨 {n}", f"레슨{n}"):
             pairs.append([txt, href])
-    # 심화 8주 과정으로의 교차 링크(다른 사이트 → 상대경로). '심화 연결' 문구의 '세션 N'.
+    # 심화 10세션 과정으로의 교차 링크(다른 사이트 → 상대경로). '심화 연결' 문구의 '세션 N'.
     for i in range(1, 9):
         href = f"../../advanced/site/session-{i:02d}.html"
         for txt in (f"세션 {i:02d}", f"세션 {i}", f"세션{i:02d}", f"세션{i}"):
@@ -155,7 +155,7 @@ def build_index():
     <div class="badges">
       <span class="badge">초보자 친화</span>
       <span class="badge">개념 + 실전 예시</span>
-      <span class="badge">8주 심화 과정 준비</span>
+      <span class="badge">10세션 심화 과정 준비</span>
     </div>
   </div>
 
@@ -163,7 +163,7 @@ def build_index():
     이 과정은 두 부분으로 이어집니다.
     <b>1부(레슨 00~06)</b>는 AI가 <b>어떻게·왜 그렇게 동작하는지</b> 멘탈 모델을 익히고,
     <b>2부(레슨 07~12)</b>는 <b>코딩 에이전트로 실제 소프트웨어를 개발하는 실전 전략</b>을 다룹니다.
-    마지막 레슨에서 전체를 정리하고 <b>8주 심화 과정</b>으로 이어집니다.
+    마지막 레슨에서 전체를 정리하고 <b>10세션 심화 과정</b>으로 이어집니다.
   </div>
 
   <h2>레슨 목록</h2>

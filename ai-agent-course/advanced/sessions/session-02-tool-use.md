@@ -1,4 +1,4 @@
-# Session 02 — Tool Use / Function Calling의 본질
+# 세션 02 — Tool Use / Function Calling의 본질
 
 > 대상: Python에 익숙하고 LLM API를 사용해 본 중급–고급 개발자
 > 형식: 개념/이론 중심 (라이브 코딩 아님), 60–90분
